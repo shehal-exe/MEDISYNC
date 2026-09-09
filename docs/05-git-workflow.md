@@ -1,42 +1,55 @@
 # MEDISYNC - Git Workflow
 
-This project strictly follows a feature-branch workflow to ensure code quality and stability.
+This project rigorously follows a feature-branch workflow to maintain a clean, stable codebase and prevent direct development on the `main` branch.
 
 ## Branches
-- `main`: The production-ready state of the repository. Only thoroughly tested code is merged here.
-- `develop`: The primary integration branch. All feature branches branch off from here and merge back here.
-- `feature/*`: Temporary branches used by developers to work on specific features or bug fixes (e.g., `feature/user-auth`, `feature/inventory-ui`).
+- `main`: The stable, production-ready state of the repository.
+- `develop`: The primary integration branch. All feature branches are derived from and merged back into this branch.
+- `feature/*`: Temporary branches used by developers for specific features, fixes, or documentation tasks.
 
-## Workflow Steps
+## Workflow Rules
+1. **Never direct development on main**: Always work in a feature branch or `develop`.
+2. **Feature branches start from develop**: Before creating a new branch, always pull the latest `develop`.
+3. **Use atomic commits**: Commits should represent a single logical change.
+4. **Review before merging**: Use Pull Requests (PRs) and peer reviews before merging into `develop`.
+5. **Delete feature branch after merge**: Keep the repository clean by deleting branches once merged, when appropriate.
+6. **Keep main stable**: Only heavily tested code from `develop` is merged into `main`.
 
-### 1. Feature Branches
-When starting a new task, create a new feature branch derived from `develop`:
-```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/your-feature-name
+## Standard Workflow Process
+
+```text
+develop
+   ↓
+feature/<feature-name>
+   ↓
+commit
+   ↓
+push
+   ↓
+Pull Request
+   ↓
+review
+   ↓
+develop
+   ↓
+testing
+   ↓
+main
 ```
 
-### 2. Commits
-- Make atomic, logical commits.
-- Use clear, descriptive commit messages.
-- Example: `feat: implement user registration endpoint` or `fix: correct typo in SQL schema`.
+## Commit Message Conventions
+We use standardized commit prefixes to clearly indicate the nature of the change:
 
-### 3. Pull Requests (PR)
-- Once the feature is complete and locally tested, push the branch to the remote repository.
-- Open a Pull Request from `feature/your-feature-name` against the `develop` branch.
-- Include a description of the changes, testing steps, and any related issue numbers in the PR description.
+- `feat:` A new feature.
+- `fix:` A bug fix.
+- `test:` Adding missing tests or correcting existing tests.
+- `docs:` Documentation only changes.
+- `refactor:` A code change that neither fixes a bug nor adds a feature.
+- `style:` Changes that do not affect the meaning of the code (white-space, formatting).
+- `chore:` Updates to build tasks, package manager configs, etc.
 
-### 4. Code Review
-- Another team member must review the code.
-- Feedback should be addressed by pushing new commits to the same feature branch.
-- Automated tests (if CI is configured) must pass.
-
-### 5. Merge into Develop
-- Once approved, the PR is merged into `develop`.
-- The feature branch can then be deleted.
-
-### 6. Final Merge into Main
-- Before a release, `develop` is heavily tested (integration, staging).
-- Once stabilized, a Pull Request is opened from `develop` to `main`.
-- Merging into `main` constitutes a production release and is usually tagged with a version number (e.g., `v1.0.0`).
+**Examples:**
+- `feat: implement patient medicine CRUD`
+- `fix: prevent negative inventory`
+- `docs: finalize database design`
+- `test: add authentication tests`
