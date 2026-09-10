@@ -79,15 +79,29 @@ MEDISYNC uses Spring Security session-based authentication with secure session c
 *Authentication: Mandatory. Role: PATIENT.*
 
 ### Patient Profile
-- `GET /api/v1/patients/me`: Get own profile.
-- `PUT /api/v1/patients/me`: Update profile.
+- `GET /api/v1/patients/me`
+  - **Purpose**: Get own profile.
+  - **Response**: `{ "success": true, "data": { "patientId": 1, "userId": 1, "email": "...", "firstName": "...", "lastName": "...", "dateOfBirth": "YYYY-MM-DD", "contactNumber": "..." } }`
+- `PUT /api/v1/patients/me`
+  - **Purpose**: Update profile.
+  - **Request Body**: `{ "firstName": "...", "lastName": "...", "dateOfBirth": "YYYY-MM-DD", "contactNumber": "..." }`
+  - **Response**: Updated profile object.
 
 ### Patient Medicines
-- `GET /api/v1/patient/medicines`: List all personal medicines.
-- `POST /api/v1/patient/medicines`: Add medicine to personal list.
-- `GET /api/v1/patient/medicines/{id}`: View specific personal medicine details.
-- `PUT /api/v1/patient/medicines/{id}`: Edit personal medicine.
-- `DELETE /api/v1/patient/medicines/{id}`: Remove personal medicine.
+- `GET /api/v1/patient/medicines`
+  - **Purpose**: List all personal medicines.
+  - **Response**: List of medicine objects.
+- `POST /api/v1/patient/medicines`
+  - **Purpose**: Add medicine to personal list.
+  - **Request Body**: `{ "medicineId": 1, "dosage": "1 pill", "instructions": "After meal" }`
+  - **Response**: Created patient medicine object.
+- `GET /api/v1/patient/medicines/{id}`
+  - **Purpose**: View specific personal medicine details.
+- `PUT /api/v1/patient/medicines/{id}`
+  - **Purpose**: Edit personal medicine.
+  - **Request Body**: `{ "dosage": "...", "instructions": "...", "isActive": true }`
+- `DELETE /api/v1/patient/medicines/{id}`
+  - **Purpose**: Remove personal medicine.
 
 ### Schedules
 - `GET /api/v1/patient/schedules`: List personal medication schedules.

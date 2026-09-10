@@ -56,6 +56,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/login").permitAll()
                 .requestMatchers("/api/v1/auth/forgot-password").permitAll()
                 .requestMatchers("/api/v1/auth/reset-password").permitAll()
+                .requestMatchers("/api/v1/patients/**").hasRole("PATIENT")
+                .requestMatchers("/api/v1/patient/medicines/**").hasRole("PATIENT")
                 .requestMatchers("/api/v1/auth/me").authenticated()
                 .requestMatchers("/api/v1/auth/logout").authenticated()
                 .requestMatchers("/api/v1/auth/change-password").authenticated()
