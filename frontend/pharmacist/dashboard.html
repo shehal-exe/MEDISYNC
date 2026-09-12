@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDISYNC - Pharmacist Dashboard</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <style>
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .metric-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+            border-top: 4px solid var(--primary-color);
+        }
+        .metric-card h3 { color: var(--text-light); font-size: 1rem; margin-bottom: 0.5rem; }
+        .metric-card .value { font-size: 2rem; font-weight: bold; color: var(--text-dark); }
+        
+        .card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        .card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: var(--secondary-color); }
+        
+        .badge { padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.85rem; font-weight: bold; }
+        .badge.PENDING { background: #ffeeba; color: #856404; }
+        .badge.VERIFIED { background: #d4edda; color: #155724; }
+        .badge.REJECTED { background: #f8d7da; color: #721c24; }
+
+        /* Simple POS Form */
+        .pos-form {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">MEDISYNC - Pharmacist</div>
+            <div class="nav-links">
+                <span id="user-greeting" style="margin-right: 15px; font-weight: bold;"></span>
+                <a href="#" id="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+        
+        <!-- Metrics / Reporting -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>Total Sales</h3>
+                <div class="value" id="metric-sales">0</div>
+            </div>
+            <div class="metric-card">
+                <h3>Total Revenue</h3>
+                <div class="value" id="metric-revenue">$0.00</div>
+            </div>
+            <div class="metric-card" style="border-top-color: var(--danger);">
+                <h3>Low Stock Alerts</h3>
+                <div class="value" id="metric-lowstock" style="color: var(--danger);">0</div>
+            </div>
+        </div>
+
+        <!-- Point of Sale -->
+        <div class="card">
+            <h3>Quick Sale (POS)</h3>
+            <div id="pos-alert" class="alert"></div>
+            <form id="pos-form" class="pos-form">
+                <div class="form-group" style="margin-bottom: 0; flex: 2;">
+                    <label>Select Medicine</label>
+                    <select id="pos-medicine" required>
+                        <option value="">Loading inventory...</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                    <label>Quantity</label>
+                    <input type="number" id="pos-quantity" min="1" value="1" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="background: #28a745;">Process Sale</button>
+            </form>
+        </div>
+
+        <!-- Pending Prescriptions -->
+        <div class="card">
+            <h3>Pending Prescriptions to Verify</h3>
+            <div id="prescriptions-content">Loading...</div>
+        </div>
+
+        <!-- Inventory -->
+        <div class="card">
+            <h3>Pharmacy Inventory</h3>
+            <div id="inventory-content">Loading...</div>
+        </div>
+
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/pharmacist.js"></script>
+</body>
+</html>
