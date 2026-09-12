@@ -55,12 +55,6 @@
                 <a href="#" class="sidebar-link" onclick="alert('No new notifications!')">
                     <span class="icon">🔔</span> Notifications
                 </a>
-                <a href="#" class="sidebar-link" onclick="document.getElementById('settingsModal').classList.add('active')">
-                    <span class="icon">⚙️</span> Settings
-                </a>
-                <a href="#" class="sidebar-link" onclick="alert('Help center is under construction.')">
-                    <span class="icon">❓</span> Help & Support
-                </a>
             </nav>
         </aside>
 
@@ -70,7 +64,6 @@
                 <h2>Pharmacist Portal</h2>
                 <div class="user-controls" style="display:flex; align-items:center; gap: 20px;">
                     <div class="user-info" id="user-greeting">Loading...</div>
-                    <button class="btn btn-primary" id="logout-btn" style="background: #dc3545;">Logout</button>
                 </div>
             </header>
             
@@ -144,6 +137,24 @@
                 <input type="number" value="10">
             </div>
             <button class="btn btn-primary" style="background: #28a745;" onclick="alert('Settings saved!'); document.getElementById('settingsModal').classList.remove('active')">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- FAB Settings Menu -->
+    <div class="fab-container">
+        <div class="fab-menu" id="fabMenu">
+            <div class="fab-menu-item" onclick="document.getElementById('settingsModal').classList.add('active')">
+                <span>⚙️</span> Settings
+            </div>
+            <div class="fab-menu-item" onclick="alert('Help center is under construction.')">
+                <span>❓</span> Help & Support
+            </div>
+            <div class="fab-menu-item danger" id="logout-btn">
+                <span>🚪</span> Logout
+            </div>
+        </div>
+        <div class="fab-btn" onclick="document.getElementById('fabMenu').classList.toggle('active')">
+            ⚙️
         </div>
     </div>
 
