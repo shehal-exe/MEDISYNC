@@ -31,6 +31,8 @@ public class PrescriptionDao {
         response.setFilePath(rs.getString("file_path"));
         response.setStatus(rs.getString("status"));
         response.setNotes(rs.getString("notes"));
+        response.setPatientId(rs.getLong("patient_id"));
+        response.setPharmacistId(rs.getObject("pharmacist_id") != null ? rs.getLong("pharmacist_id") : null);
         return response;
     };
 
@@ -58,5 +60,28 @@ public class PrescriptionDao {
         String sql = "SELECT * FROM Prescription WHERE prescription_id = ? AND patient_id = ?";
         List<PrescriptionResponse> results = jdbcTemplate.query(sql, rowMapper, prescriptionId, patientId);
         return results.isEmpty() ? null : results.get(0);
+    }
+
+    public List<PrescriptionResponse> findAll() {
+        String sql = "SELECT * FROM Prescription ORDER BY upload_date DESC";
+        return jdbcTemplate.query(sql, rowMapper);
+    }
+
+    public List<PrescriptionResponse> findByStatus(String status) {
+        String sql = "SELECT * FROM Prescription WHERE status = ? ORDER BY upload_date DESC";
+        return jdbcTemplate.query(sql, rowMapper, status);
+    }
+
+    public PrescriptionResponse findById(Long prescriptionId) {
+        String sql = "SELECT * FROM Prescription WHERE prescription_id = ?";
+        List<PrescriptionResponse> results = jdbcTemplate.query(sql, rowMapper, prescriptionId);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    public int updateStatus(Long prescriptionId, Long pharmacistId, String status, String notes) {
+        return jdbcTemplate.update(
+                "UPDATE Prescription SET pharmacist_id = ?, status = ?, notes = ? WHERE prescription_id = ?",
+                pharmacistId, status, notes, prescriptionId
+        );
     }
 }

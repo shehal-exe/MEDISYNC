@@ -9,6 +9,8 @@ public class PrescriptionResponse {
     private String filePath;
     private String status;
     private String notes;
+    private Long patientId;
+    private Long pharmacistId;
     private List<PrescriptionItemResponse> items;
 
     public Long getPrescriptionId() { return prescriptionId; }
@@ -25,6 +27,12 @@ public class PrescriptionResponse {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public Long getPatientId() { return patientId; }
+    public void setPatientId(Long patientId) { this.patientId = patientId; }
+
+    public Long getPharmacistId() { return pharmacistId; }
+    public void setPharmacistId(Long pharmacistId) { this.pharmacistId = pharmacistId; }
 
     public List<PrescriptionItemResponse> getItems() { return items; }
     public void setItems(List<PrescriptionItemResponse> items) { this.items = items; }

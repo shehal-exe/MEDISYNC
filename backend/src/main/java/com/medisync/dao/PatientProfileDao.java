@@ -47,4 +47,10 @@ public class PatientProfileDao {
                 firstName, lastName, dateOfBirth != null ? java.sql.Date.valueOf(dateOfBirth) : null, contactNumber, userId
         );
     }
+
+    public Long getUserIdByPatientId(Long patientId) {
+        java.util.List<Long> results = jdbcTemplate.query("SELECT user_id FROM PatientProfile WHERE patient_id = ?", 
+            (rs, rowNum) -> rs.getLong("user_id"), patientId);
+        return results.isEmpty() ? null : results.get(0);
+    }
 }
