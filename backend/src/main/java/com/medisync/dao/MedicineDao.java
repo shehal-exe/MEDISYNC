@@ -27,9 +27,9 @@ public class MedicineDao {
         m.setName(rs.getString("name"));
         m.setDescription(rs.getString("description"));
         m.setManufacturer(rs.getString("manufacturer"));
-        m.setPrice(rs.getBigDecimal("price"));
+        m.setPrice(rs.getBigDecimal("price") != null ? rs.getBigDecimal("price") : java.math.BigDecimal.ZERO);
         m.setStockQuantity(rs.getInt("stock_quantity"));
-        m.setRequiresPrescription(rs.getBoolean("requires_prescription"));
+        m.setRequiresPrescription(false);
         return m;
     };
 
@@ -43,42 +43,45 @@ public class MedicineDao {
     }
 
     public Long create(MedicineRequest req) {
+        String sql = "INSERT INTO Medicine (name, description, manufacturer) VALUES (?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO Medicine (name, description, manufacturer, price, stock_quantity, requires_prescription) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS
-            );
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, req.getName());
             ps.setString(2, req.getDescription());
             ps.setString(3, req.getManufacturer());
-            ps.setBigDecimal(4, req.getPrice());
-            ps.setInt(5, req.getStockQuantity());
-            ps.setBoolean(6, req.getRequiresPrescription() != null ? req.getRequiresPrescription() : false);
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();
     }
 
     public List<MedicineResponse> findAll() {
-        return jdbcTemplate.query("SELECT * FROM Medicine ORDER BY name ASC", rowMapper);
+        String sql = "SELECT m.medicine_id, m.name, m.description, m.manufacturer, " +
+                     "SUM(ib.quantity_in_stock) as stock_quantity, MAX(ib.unit_price) as price " +
+                     "FROM Medicine m " +
+                     "LEFT JOIN InventoryBatch ib ON m.medicine_id = ib.medicine_id " +
+                     "GROUP BY m.medicine_id, m.name, m.description, m.manufacturer " +
+                     "ORDER BY m.name ASC";
+        return jdbcTemplate.query(sql, rowMapper);
     }
 
     public MedicineResponse findById(Long id) {
-        List<MedicineResponse> results = jdbcTemplate.query("SELECT * FROM Medicine WHERE medicine_id = ?", rowMapper, id);
+        String sql = "SELECT m.medicine_id, m.name, m.description, m.manufacturer, " +
+                     "SUM(ib.quantity_in_stock) as stock_quantity, MAX(ib.unit_price) as price " +
+                     "FROM Medicine m " +
+                     "LEFT JOIN InventoryBatch ib ON m.medicine_id = ib.medicine_id " +
+                     "WHERE m.medicine_id = ? " +
+                     "GROUP BY m.medicine_id, m.name, m.description, m.manufacturer";
+        List<MedicineResponse> results = jdbcTemplate.query(sql, rowMapper, id);
         return results.isEmpty() ? null : results.get(0);
     }
 
     public boolean update(Long id, MedicineRequest req) {
-        String sql = "UPDATE Medicine SET name=?, description=?, manufacturer=?, price=?, stock_quantity=?, requires_prescription=? WHERE medicine_id=?";
+        String sql = "UPDATE Medicine SET name=?, description=?, manufacturer=? WHERE medicine_id=?";
         int rows = jdbcTemplate.update(sql,
                 req.getName(),
                 req.getDescription(),
                 req.getManufacturer(),
-                req.getPrice(),
-                req.getStockQuantity(),
-                req.getRequiresPrescription() != null ? req.getRequiresPrescription() : false,
                 id);
         return rows > 0;
     }
