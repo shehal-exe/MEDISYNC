@@ -6,9 +6,7 @@
     <title>MEDISYNC - Pharmacist Dashboard</title>
     <link rel="stylesheet" href="../css/global.css">
     <style>
-        .dashboard-container {
-            margin-top: 2rem;
-        }
+        body { background: #f4f7f6; animation: none; }
         .dashboard-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -30,33 +28,9 @@
         }
         .metric-card h3 { color: var(--text-light); font-size: 1rem; margin-bottom: 0.5rem; }
         .metric-card .value { font-size: 2rem; font-weight: bold; color: var(--text-dark); }
-        
-        .card {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
-        }
-        .card h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-        }
-        
         table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
         th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color); }
-        th { background-color: var(--secondary-color); }
         
-        .badge { padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.85rem; font-weight: bold; }
-        .badge.PENDING { background: #ffeeba; color: #856404; }
-        .badge.VERIFIED { background: #d4edda; color: #155724; }
-        .badge.REJECTED { background: #f8d7da; color: #721c24; }
-
-        /* Simple POS Form */
         .pos-form {
             background: #f9f9f9;
             padding: 1rem;
@@ -66,76 +40,114 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-brand">MEDISYNC - Pharmacist</div>
-            <div class="nav-links">
-                <span id="user-greeting" style="margin-right: 15px; font-weight: bold;"></span>
-                <a href="#" id="logout-btn">Logout</a>
-            </div>
-        </div>
-    </nav>
 
-    <div class="container dashboard-container">
+    <div class="app-container">
         
-        <!-- TOP ROW: Metrics -->
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <h3>Total Sales</h3>
-                <div class="value" id="metric-sales">0</div>
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                MEDISYNC
             </div>
-            <div class="metric-card">
-                <h3>Total Revenue</h3>
-                <div class="value" id="metric-revenue">$0.00</div>
-            </div>
-            <div class="metric-card" style="border-top-color: var(--danger);">
-                <h3>Low Stock Alerts</h3>
-                <div class="value" id="metric-lowstock" style="color: var(--danger);">0</div>
-            </div>
-        </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link active">
+                    <span class="icon">📈</span> Dashboard
+                </a>
+                <a href="#" class="sidebar-link" onclick="alert('No new notifications!')">
+                    <span class="icon">🔔</span> Notifications
+                </a>
+                <a href="#" class="sidebar-link" onclick="document.getElementById('settingsModal').classList.add('active')">
+                    <span class="icon">⚙️</span> Settings
+                </a>
+                <a href="#" class="sidebar-link" onclick="alert('Help center is under construction.')">
+                    <span class="icon">❓</span> Help & Support
+                </a>
+            </nav>
+        </aside>
 
-        <div class="dashboard-grid">
-            <!-- LEFT COLUMN -->
-            <div class="main-column">
-                <!-- Pending Prescriptions -->
-                <div class="card">
-                    <h3>📋 Pending Prescriptions to Verify</h3>
-                    <div id="prescriptions-content">Loading...</div>
+        <!-- MAIN CONTENT -->
+        <main class="app-main">
+            <header class="app-header">
+                <h2>Pharmacist Portal</h2>
+                <div class="user-controls" style="display:flex; align-items:center; gap: 20px;">
+                    <div class="user-info" id="user-greeting">Loading...</div>
+                    <button class="btn btn-primary" id="logout-btn" style="background: #dc3545;">Logout</button>
                 </div>
-
-                <!-- Inventory -->
-                <div class="card">
-                    <h3>📦 Pharmacy Inventory</h3>
-                    <div id="inventory-content">Loading...</div>
+            </header>
+            
+            <!-- TOP ROW: Metrics -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <h3>Total Sales</h3>
+                    <div class="value" id="metric-sales">0</div>
                 </div>
-            </div>
-
-            <!-- RIGHT COLUMN -->
-            <div class="sidebar-column">
-                <!-- Point of Sale -->
-                <div class="card" style="position: sticky; top: 100px;">
-                    <h3>💳 Quick Sale (POS)</h3>
-                    <div id="pos-alert" class="alert"></div>
-                    <form id="pos-form" class="pos-form">
-                        <div class="form-group" style="margin-bottom: 1rem; width: 100%;">
-                            <label>Select Medicine</label>
-                            <select id="pos-medicine" required style="width: 100%;">
-                                <option value="">Loading inventory...</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="margin-bottom: 1rem; width: 100%;">
-                            <label>Quantity</label>
-                            <input type="number" id="pos-quantity" min="1" value="1" required style="width: 100%;">
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="background: #28a745; width: 100%;">Process Sale</button>
-                    </form>
+                <div class="metric-card">
+                    <h3>Total Revenue</h3>
+                    <div class="value" id="metric-revenue">$0.00</div>
+                </div>
+                <div class="metric-card" style="border-top-color: var(--danger);">
+                    <h3>Low Stock Alerts</h3>
+                    <div class="value" id="metric-lowstock" style="color: var(--danger);">0</div>
                 </div>
             </div>
-        </div>
 
+            <div class="dashboard-grid">
+                <!-- LEFT COLUMN -->
+                <div class="main-column">
+                    <!-- Pending Prescriptions -->
+                    <div class="card">
+                        <h3>📋 Pending Prescriptions to Verify</h3>
+                        <div id="prescriptions-content">Loading...</div>
+                    </div>
+
+                    <!-- Inventory -->
+                    <div class="card">
+                        <h3>📦 Pharmacy Inventory</h3>
+                        <div id="inventory-content">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="sidebar-column">
+                    <!-- Point of Sale -->
+                    <div class="card" style="position: sticky; top: 20px;">
+                        <h3>💳 Quick Sale (POS)</h3>
+                        <div id="pos-alert" class="alert"></div>
+                        <form id="pos-form" class="pos-form">
+                            <div class="form-group" style="margin-bottom: 1rem; width: 100%;">
+                                <label>Select Medicine</label>
+                                <select id="pos-medicine" required style="width: 100%;">
+                                    <option value="">Loading inventory...</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem; width: 100%;">
+                                <label>Quantity</label>
+                                <input type="number" id="pos-quantity" min="1" value="1" required style="width: 100%;">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="background: #28a745; width: 100%;">Process Sale</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
-    <script src="../js/api.js?v=2"></script>
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('settingsModal').classList.remove('active')">&times;</span>
+            <h3>Pharmacy Settings</h3>
+            <p>Update pharmacy details, business hours, and operational preferences.</p>
+            <br>
+            <div class="form-group">
+                <label>Inventory Alerts Threshold</label>
+                <input type="number" value="10">
+            </div>
+            <button class="btn btn-primary" style="background: #28a745;" onclick="alert('Settings saved!'); document.getElementById('settingsModal').classList.remove('active')">Save Changes</button>
+        </div>
+    </div>
+
+    <script src="../js/api.js?v=4"></script>
     <script src="../js/pharmacist.js"></script>
 </body>
 </html>

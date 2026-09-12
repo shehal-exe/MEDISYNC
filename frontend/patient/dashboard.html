@@ -6,27 +6,12 @@
     <title>MEDISYNC - Patient Dashboard</title>
     <link rel="stylesheet" href="../css/global.css">
     <style>
-        .dashboard-container {
+        body { background: #f4f7f6; animation: none; }
+        .dashboard-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 2rem;
-            margin-top: 2rem;
         }
-        .card {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
-        }
-        .card h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 0.5rem;
-        }
-        
-        /* Reminder specific */
         .reminder-card {
             border-left: 4px solid var(--danger);
             background: #fff8f8;
@@ -34,23 +19,6 @@
             margin-bottom: 1rem;
             border-radius: 4px;
         }
-        .reminder-card h4 { margin-bottom: 0.5rem; }
-        .reminder-actions { margin-top: 1rem; }
-        
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        th { background-color: var(--secondary-color); }
-        
-        /* Badges */
         .badge {
             padding: 0.25rem 0.5rem;
             border-radius: 12px;
@@ -60,61 +28,106 @@
         .badge.PENDING { background: #ffeeba; color: #856404; }
         .badge.VERIFIED { background: #d4edda; color: #155724; }
         .badge.REJECTED { background: #f8d7da; color: #721c24; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color); }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-brand">MEDISYNC - Patient</div>
-            <div class="nav-links">
-                <span id="user-greeting" style="margin-right: 15px; font-weight: bold;"></span>
-                <a href="#" id="logout-btn">Logout</a>
-            </div>
-        </div>
-    </nav>
 
-    <div class="container dashboard-container">
-        <!-- LEFT COLUMN (Main Content) -->
-        <div class="main-column">
-            
-            <!-- Reminders are the most urgent, put them top left -->
-            <div class="card">
-                <h3>🔔 Today's Action Required (Reminders)</h3>
-                <div id="reminders-content">Loading...</div>
+    <div class="app-container">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                MEDISYNC
             </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-link active">
+                    <span class="icon">📊</span> Dashboard
+                </a>
+                <a href="#" class="sidebar-link" onclick="alert('No new notifications!')">
+                    <span class="icon">🔔</span> Notifications
+                </a>
+                <a href="#" class="sidebar-link" onclick="document.getElementById('settingsModal').classList.add('active')">
+                    <span class="icon">⚙️</span> Settings
+                </a>
+                <a href="#" class="sidebar-link" onclick="alert('Help center is under construction.')">
+                    <span class="icon">❓</span> Help & Support
+                </a>
+            </nav>
+        </aside>
 
-            <!-- Medications List -->
-            <div class="card">
-                <h3>💊 My Active Medications</h3>
-                <div id="medications-content">Loading...</div>
-            </div>
+        <!-- MAIN CONTENT -->
+        <main class="app-main">
+            <header class="app-header">
+                <h2>Patient Dashboard</h2>
+                <div class="user-controls" style="display:flex; align-items:center; gap: 20px;">
+                    <div class="user-info" id="user-greeting">Loading...</div>
+                    <button class="btn btn-primary" id="logout-btn">Logout</button>
+                </div>
+            </header>
 
-            <!-- Prescriptions -->
-            <div class="card">
-                <h3>📄 Prescription Management</h3>
-                <form id="upload-prescription-form" style="margin-bottom: 1.5rem; display: flex; gap: 10px; align-items: flex-end;">
-                    <div class="form-group" style="margin-bottom: 0; flex: 1;">
-                        <label for="prescriptionFile">Upload New Prescription (Image/PDF)</label>
-                        <input type="file" id="prescriptionFile" accept="image/*,.pdf" required style="background: var(--bg-light);">
+            <div class="dashboard-grid">
+                <!-- LEFT COLUMN (Main Content) -->
+                <div class="main-column">
+                    <!-- Reminders are the most urgent, put them top left -->
+                    <div class="card">
+                        <h3>🔔 Today's Action Required</h3>
+                        <div id="reminders-content">Loading...</div>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem;">Upload</button>
-                </form>
-                <div id="upload-alert" class="alert"></div>
-                <div id="prescriptions-content">Loading...</div>
-            </div>
-        </div>
 
-        <!-- RIGHT COLUMN (Sidebar) -->
-        <div class="sidebar-column">
-            <!-- Profile Info -->
-            <div class="card" style="position: sticky; top: 100px;">
-                <h3>👤 My Profile</h3>
-                <div id="profile-content">Loading...</div>
+                    <!-- Medications List -->
+                    <div class="card">
+                        <h3>💊 My Active Medications</h3>
+                        <div id="medications-content">Loading...</div>
+                    </div>
+
+                    <!-- Prescriptions -->
+                    <div class="card">
+                        <h3>📄 Prescription Management</h3>
+                        <form id="upload-prescription-form" style="margin-bottom: 1.5rem; display: flex; gap: 10px; align-items: flex-end;">
+                            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                                <label for="prescriptionFile">Upload New Prescription (Image/PDF)</label>
+                                <input type="file" id="prescriptionFile" accept="image/*,.pdf" required style="background: var(--bg-light);">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem;">Upload</button>
+                        </form>
+                        <div id="upload-alert" class="alert"></div>
+                        <div id="prescriptions-content">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN (Sidebar inside main content) -->
+                <div class="sidebar-column">
+                    <!-- Profile Info -->
+                    <div class="card" style="position: sticky; top: 20px;">
+                        <h3>👤 My Profile</h3>
+                        <div id="profile-content">Loading...</div>
+                    </div>
+                </div>
             </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('settingsModal').classList.remove('active')">&times;</span>
+            <h3>Account Settings</h3>
+            <p>Update your personal information or change your password.</p>
+            <br>
+            <div class="form-group">
+                <label>Theme</label>
+                <select>
+                    <option>Light Mode</option>
+                    <option>Dark Mode (Coming Soon)</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="alert('Settings saved!'); document.getElementById('settingsModal').classList.remove('active')">Save Changes</button>
         </div>
     </div>
 
-    <script src="../js/api.js?v=2"></script>
+    <script src="../js/api.js?v=4"></script>
     <script src="../js/patient.js"></script>
 </body>
 </html>
