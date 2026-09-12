@@ -122,25 +122,97 @@
         </main>
     </div>
 
-    <!-- Settings Modal -->
+    <!-- Settings Modal (Enterprise Framework) -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-content">
-            <span class="modal-close" onclick="document.getElementById('settingsModal').classList.remove('active')">&times;</span>
-            <h3>Account Settings</h3>
-            <p>Update your personal information or change your password.</p>
-            <br>
-            <div class="form-group">
-                <label>Theme</label>
-                <select>
-                    <option>Light Mode</option>
-                    <option>Dark Mode (Coming Soon)</option>
-                </select>
+            <div class="modal-header">
+                <h3>Account Settings</h3>
+                <span class="modal-close" onclick="document.getElementById('settingsModal').classList.remove('active')">&times;</span>
             </div>
-            <button class="btn btn-primary" onclick="alert('Settings saved!'); document.getElementById('settingsModal').classList.remove('active')">Save Changes</button>
+            
+            <div class="modal-body">
+                <!-- Sidebar Tabs -->
+                <div class="settings-sidebar">
+                    <div class="settings-tab active" onclick="switchTab(event, 'sec-profile')">Profile Info</div>
+                    <div class="settings-tab" onclick="switchTab(event, 'sec-medical')">Medical Details</div>
+                    <div class="settings-tab" onclick="switchTab(event, 'sec-notifications')">Notifications</div>
+                    <div class="settings-tab" onclick="switchTab(event, 'sec-security')">Security</div>
+                </div>
+                
+                <!-- Main Content Areas -->
+                <div class="settings-content">
+                    
+                    <div id="sec-profile" class="settings-section active">
+                        <h4>Personal Information</h4>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" value="Loading..." disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input type="text" placeholder="+1 (555) 000-0000">
+                        </div>
+                        <button class="btn btn-primary">Update Profile</button>
+                    </div>
+
+                    <div id="sec-medical" class="settings-section">
+                        <h4>Medical Profile</h4>
+                        <div class="form-group">
+                            <label>Known Allergies</label>
+                            <textarea rows="3" placeholder="List any known allergies (e.g. Penicillin, Peanuts)"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Primary Care Physician</label>
+                            <input type="text" placeholder="Dr. Smith">
+                        </div>
+                        <button class="btn btn-primary">Save Medical Info</button>
+                    </div>
+
+                    <div id="sec-notifications" class="settings-section">
+                        <h4>Notification Preferences</h4>
+                        <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+                            <input type="checkbox" id="notif-sms" checked style="width:auto;">
+                            <label for="notif-sms" style="margin:0;">SMS Reminders for Medication</label>
+                        </div>
+                        <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+                            <input type="checkbox" id="notif-email" checked style="width:auto;">
+                            <label for="notif-email" style="margin:0;">Email alerts when Prescriptions are ready</label>
+                        </div>
+                    </div>
+
+                    <div id="sec-security" class="settings-section">
+                        <h4>Security Settings</h4>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" placeholder="Enter new password">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password</label>
+                            <input type="password" placeholder="Confirm new password">
+                        </div>
+                        <button class="btn btn-primary" style="background: var(--danger);">Change Password</button>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="../js/api.js?v=4"></script>
     <script src="../js/patient.js"></script>
+    <script>
+        // Tab Switching Logic
+        function switchTab(event, sectionId) {
+            // Remove active from all tabs
+            document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+            // Add active to clicked tab
+            event.currentTarget.classList.add('active');
+            
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+            // Show target section
+            document.getElementById(sectionId).classList.add('active');
+        }
+    </script>
 </body>
 </html>

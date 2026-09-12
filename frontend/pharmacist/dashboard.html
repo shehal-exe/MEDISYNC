@@ -145,22 +145,102 @@
         </main>
     </div>
 
-    <!-- Settings Modal -->
+    <!-- Settings Modal (Enterprise Framework) -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-content">
-            <span class="modal-close" onclick="document.getElementById('settingsModal').classList.remove('active')">&times;</span>
-            <h3>Pharmacy Settings</h3>
-            <p>Update pharmacy details, business hours, and operational preferences.</p>
-            <br>
-            <div class="form-group">
-                <label>Inventory Alerts Threshold</label>
-                <input type="number" value="10">
+            <div class="modal-header">
+                <h3>Pharmacy Settings</h3>
+                <span class="modal-close" onclick="document.getElementById('settingsModal').classList.remove('active')">&times;</span>
             </div>
-            <button class="btn btn-primary" style="background: #28a745;" onclick="alert('Settings saved!'); document.getElementById('settingsModal').classList.remove('active')">Save Changes</button>
+            
+            <div class="modal-body">
+                <!-- Sidebar Tabs -->
+                <div class="settings-sidebar">
+                    <div class="settings-tab active" onclick="switchTab(event, 'sec-pharmacy')">Pharmacy Profile</div>
+                    <div class="settings-tab" onclick="switchTab(event, 'sec-inventory')">Inventory Rules</div>
+                    <div class="settings-tab" onclick="switchTab(event, 'sec-workflow')">Workflow Options</div>
+                    <div class="settings-tab" onclick="switchTab(event, 'sec-security')">Security</div>
+                </div>
+                
+                <!-- Main Content Areas -->
+                <div class="settings-content">
+                    
+                    <div id="sec-pharmacy" class="settings-section active">
+                        <h4>Pharmacy Details</h4>
+                        <div class="form-group">
+                            <label>Store Name / Pharmacist Name</label>
+                            <input type="text" value="Loading..." disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>License Number</label>
+                            <input type="text" value="Loading..." disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Support Email Address</label>
+                            <input type="email" placeholder="support@mypharmacy.com">
+                        </div>
+                        <button class="btn btn-primary">Update Details</button>
+                    </div>
+
+                    <div id="sec-inventory" class="settings-section">
+                        <h4>Inventory Automation</h4>
+                        <div class="form-group">
+                            <label>Low Stock Alert Threshold (Quantity)</label>
+                            <input type="number" value="10">
+                            <small style="color: #666;">You will receive alerts on the dashboard when stock drops below this number.</small>
+                        </div>
+                        <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top: 1rem;">
+                            <input type="checkbox" id="auto-reorder" style="width:auto;">
+                            <label for="auto-reorder" style="margin:0;">Enable Auto-Reordering suggestions</label>
+                        </div>
+                        <button class="btn btn-primary">Save Rules</button>
+                    </div>
+
+                    <div id="sec-workflow" class="settings-section">
+                        <h4>Workflow Preferences</h4>
+                        <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+                            <input type="checkbox" id="auto-print" checked style="width:auto;">
+                            <label for="auto-print" style="margin:0;">Automatically print labels upon verification</label>
+                        </div>
+                        <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+                            <input type="checkbox" id="require-sig" checked style="width:auto;">
+                            <label for="require-sig" style="margin:0;">Require patient signature at POS</label>
+                        </div>
+                    </div>
+
+                    <div id="sec-security" class="settings-section">
+                        <h4>Security & Access</h4>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" placeholder="Enter new password">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password</label>
+                            <input type="password" placeholder="Confirm new password">
+                        </div>
+                        <button class="btn btn-primary" style="background: var(--danger);">Change Password</button>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="../js/api.js?v=4"></script>
     <script src="../js/pharmacist.js"></script>
+    <script>
+        // Tab Switching Logic
+        function switchTab(event, sectionId) {
+            // Remove active from all tabs
+            document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+            // Add active to clicked tab
+            event.currentTarget.classList.add('active');
+            
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+            // Show target section
+            document.getElementById(sectionId).classList.add('active');
+        }
+    </script>
 </body>
 </html>

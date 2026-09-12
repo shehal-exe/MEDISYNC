@@ -268,7 +268,7 @@ a:hover {
     border: 1px solid #c3e6cb;
     display: block;
 }
-/* Modals */
+/* Modals (Enhanced Tabbed Framework) */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -283,19 +283,84 @@ a:hover {
 }
 .modal-content {
     background: var(--white);
-    padding: 2rem;
     border-radius: 12px;
-    width: 400px;
-    max-width: 90%;
+    width: 800px;
+    max-width: 95%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
     position: relative;
     animation: fadeInUp 0.3s ease;
+    overflow: hidden;
+}
+.modal-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--primary-color);
 }
 .modal-close {
-    position: absolute;
-    top: 15px; right: 15px;
     cursor: pointer;
     font-size: 1.5rem;
     color: var(--text-light);
+    transition: color 0.2s;
+}
+.modal-close:hover {
+    color: var(--danger);
+}
+.modal-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+/* Settings Sidebar */
+.settings-sidebar {
+    width: 200px;
+    background: #f8f9fa;
+    border-right: 1px solid var(--border-color);
+    padding: 1rem 0;
+}
+.settings-tab {
+    padding: 1rem 1.5rem;
+    display: block;
+    cursor: pointer;
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+.settings-tab:hover {
+    background: #e9ecef;
+}
+.settings-tab.active {
+    background: #fff;
+    color: var(--primary-color);
+    border-left-color: var(--primary-color);
+}
+/* Settings Content */
+.settings-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+.settings-section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+.settings-section.active {
+    display: block;
+}
+.settings-section h4 {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+    color: var(--text-dark);
 }
 /* Profile Dropdown in Header */
 .header-actions {
