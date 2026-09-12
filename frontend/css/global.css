@@ -18,11 +18,34 @@
     box-sizing: border-box;
 }
 
+/* Base */
 body {
     font-family: var(--font-family);
-    background-color: var(--bg-light);
+    background: linear-gradient(135deg, #f0f4f8, #e0eaf5);
+    background-size: 200% 200%;
+    animation: premiumBg 15s ease infinite;
     color: var(--text-dark);
     line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+@keyframes premiumBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 a {
@@ -38,31 +61,42 @@ a:hover {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    animation: fadeInUp 0.8s ease-out forwards;
 }
 
-/* Navbar styles */
+/* Navigation */
 .navbar {
-    background-color: var(--white);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    color: white;
     padding: 1rem 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .navbar .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    animation: none; /* don't fade up the nav */
 }
 
 .nav-brand {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary-color);
+    text-decoration: none;
+    letter-spacing: 1px;
 }
 
 .nav-links a {
-    margin-left: 1.5rem;
     color: var(--text-dark);
+    text-decoration: none;
+    margin-left: 1.5rem;
     font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
@@ -70,16 +104,28 @@ a:hover {
     text-decoration: none;
 }
 
-/* Button styles */
+/* Buttons */
 .btn {
     display: inline-block;
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 1rem;
+    font-weight: 500;
     text-align: center;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
 }
 
 .btn-primary {
@@ -88,28 +134,50 @@ a:hover {
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-hover);
+    background-color: #004494;
     color: var(--white);
-    text-decoration: none;
 }
 
-/* Form Styles */
+/* Forms */
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
+    color: var(--text-dark);
     font-weight: 500;
 }
 
 .form-group input, .form-group select, .form-group textarea {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
     font-family: var(--font-family);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0,86,179,0.1);
+}
+
+/* Cards used in dashboard */
+.card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
 }
 
 .alert {
