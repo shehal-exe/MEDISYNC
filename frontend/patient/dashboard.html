@@ -8,7 +8,7 @@
     <style>
         .dashboard-container {
             display: grid;
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: 2fr 1fr;
             gap: 2rem;
             margin-top: 2rem;
         }
@@ -74,37 +74,42 @@
     </nav>
 
     <div class="container dashboard-container">
-        <!-- LEFT COLUMN -->
-        <div>
+        <!-- LEFT COLUMN (Main Content) -->
+        <div class="main-column">
+            
+            <!-- Reminders are the most urgent, put them top left -->
             <div class="card">
-                <h3>My Profile</h3>
-                <div id="profile-content">Loading...</div>
-            </div>
-
-            <div class="card">
-                <h3>Today's Reminders</h3>
+                <h3>🔔 Today's Action Required (Reminders)</h3>
                 <div id="reminders-content">Loading...</div>
             </div>
-        </div>
 
-        <!-- RIGHT COLUMN -->
-        <div>
+            <!-- Medications List -->
             <div class="card">
-                <h3>My Medications & Schedule</h3>
+                <h3>💊 My Active Medications</h3>
                 <div id="medications-content">Loading...</div>
             </div>
 
+            <!-- Prescriptions -->
             <div class="card">
-                <h3>My Prescriptions</h3>
+                <h3>📄 Prescription Management</h3>
                 <form id="upload-prescription-form" style="margin-bottom: 1.5rem; display: flex; gap: 10px; align-items: flex-end;">
                     <div class="form-group" style="margin-bottom: 0; flex: 1;">
-                        <label for="prescriptionFile">Upload New Prescription</label>
-                        <input type="file" id="prescriptionFile" accept="image/*,.pdf" required>
+                        <label for="prescriptionFile">Upload New Prescription (Image/PDF)</label>
+                        <input type="file" id="prescriptionFile" accept="image/*,.pdf" required style="background: var(--bg-light);">
                     </div>
-                    <button type="submit" class="btn btn-primary">Upload</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem;">Upload</button>
                 </form>
                 <div id="upload-alert" class="alert"></div>
                 <div id="prescriptions-content">Loading...</div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN (Sidebar) -->
+        <div class="sidebar-column">
+            <!-- Profile Info -->
+            <div class="card" style="position: sticky; top: 100px;">
+                <h3>👤 My Profile</h3>
+                <div id="profile-content">Loading...</div>
             </div>
         </div>
     </div>
