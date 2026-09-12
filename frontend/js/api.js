@@ -22,7 +22,7 @@ async function fetchApi(endpoint, options = {}) {
         
         // Handle 401 Unauthorized globally (e.g. session expired)
         if (response.status === 401 && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/me')) {
-            window.location.href = '/login.html';
+            window.location.href = '/index.html';
             return null;
         }
 

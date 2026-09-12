@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 1. Check Auth & Load User
     const meRes = await fetchApi('/auth/me');
     if (!meRes || !meRes.success || meRes.data.role !== 'PHARMACIST') {
-        window.location.href = '../login.html';
+        window.location.href = '../index.html';
         return;
     }
     document.getElementById('user-greeting').textContent = `Dr. ${meRes.data.email}`;
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('logout-btn').addEventListener('click', async (e) => {
         e.preventDefault();
         await fetchApi('/auth/logout', { method: 'POST' });
-        window.location.href = '../login.html';
+        window.location.href = '../index.html';
     });
 
     // 2. Load Dashboard Metrics
