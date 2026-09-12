@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '../index.html';
     });
 
-    // 2. Load Profile
+    // Load Profile
     async function loadProfile() {
-        const res = await fetchApi('/patient/profile');
+        const res = await fetchApi('/patients/me');
         const container = document.getElementById('profile-content');
         if (res && res.success) {
             const p = res.data;
