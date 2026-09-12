@@ -55,8 +55,28 @@
         <main class="app-main">
             <header class="app-header">
                 <h2>Patient Dashboard</h2>
-                <div class="user-controls" style="display:flex; align-items:center; gap: 20px;">
+                <div class="header-actions">
                     <div class="user-info" id="user-greeting">Loading...</div>
+                    
+                    <!-- Settings / Profile Dropdown -->
+                    <div class="profile-btn" onclick="document.getElementById('profileMenu').classList.toggle('active')">
+                        ⚙️
+                    </div>
+                    
+                    <div class="profile-menu" id="profileMenu">
+                        <div class="profile-menu-header">
+                            Manage Account
+                        </div>
+                        <div class="profile-menu-item" onclick="document.getElementById('settingsModal').classList.add('active'); document.getElementById('profileMenu').classList.remove('active');">
+                            <span>⚙️</span> Settings
+                        </div>
+                        <div class="profile-menu-item" onclick="alert('Help center is under construction.'); document.getElementById('profileMenu').classList.remove('active');">
+                            <span>❓</span> Help & Support
+                        </div>
+                        <div class="profile-menu-item danger" id="logout-btn">
+                            <span>🚪</span> Logout
+                        </div>
+                    </div>
                 </div>
             </header>
 
@@ -117,24 +137,6 @@
                 </select>
             </div>
             <button class="btn btn-primary" onclick="alert('Settings saved!'); document.getElementById('settingsModal').classList.remove('active')">Save Changes</button>
-        </div>
-    </div>
-
-    <!-- FAB Settings Menu -->
-    <div class="fab-container">
-        <div class="fab-menu" id="fabMenu">
-            <div class="fab-menu-item" onclick="document.getElementById('settingsModal').classList.add('active')">
-                <span>⚙️</span> Settings
-            </div>
-            <div class="fab-menu-item" onclick="alert('Help center is under construction.')">
-                <span>❓</span> Help & Support
-            </div>
-            <div class="fab-menu-item danger" id="logout-btn">
-                <span>🚪</span> Logout
-            </div>
-        </div>
-        <div class="fab-btn" onclick="document.getElementById('fabMenu').classList.toggle('active')">
-            ⚙️
         </div>
     </div>
 
