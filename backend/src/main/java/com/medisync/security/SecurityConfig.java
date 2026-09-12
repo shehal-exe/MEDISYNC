@@ -102,6 +102,7 @@ public class SecurityConfig {
                 // Patient-only endpoints
                 .requestMatchers("/api/v1/patients/**").hasRole("PATIENT")
                 .requestMatchers("/api/v1/patient/medicines/**").hasRole("PATIENT")
+                .requestMatchers("/api/v1/patient/medication-schedules/**").hasRole("PATIENT")
 
                 // Authenticated endpoints
                 .requestMatchers("/api/v1/auth/me").authenticated()
