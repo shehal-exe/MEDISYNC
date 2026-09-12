@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDISYNC - Patient Dashboard</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <style>
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        .card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        /* Reminder specific */
+        .reminder-card {
+            border-left: 4px solid var(--danger);
+            background: #fff8f8;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+        .reminder-card h4 { margin-bottom: 0.5rem; }
+        .reminder-actions { margin-top: 1rem; }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th { background-color: var(--secondary-color); }
+        
+        /* Badges */
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .badge.PENDING { background: #ffeeba; color: #856404; }
+        .badge.VERIFIED { background: #d4edda; color: #155724; }
+        .badge.REJECTED { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">MEDISYNC - Patient</div>
+            <div class="nav-links">
+                <span id="user-greeting" style="margin-right: 15px; font-weight: bold;"></span>
+                <a href="#" id="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+        <!-- LEFT COLUMN -->
+        <div>
+            <div class="card">
+                <h3>My Profile</h3>
+                <div id="profile-content">Loading...</div>
+            </div>
+
+            <div class="card">
+                <h3>Today's Reminders</h3>
+                <div id="reminders-content">Loading...</div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div>
+            <div class="card">
+                <h3>My Medications & Schedule</h3>
+                <div id="medications-content">Loading...</div>
+            </div>
+
+            <div class="card">
+                <h3>My Prescriptions</h3>
+                <form id="upload-prescription-form" style="margin-bottom: 1.5rem; display: flex; gap: 10px; align-items: flex-end;">
+                    <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                        <label for="prescriptionFile">Upload New Prescription</label>
+                        <input type="file" id="prescriptionFile" accept="image/*,.pdf" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+                <div id="upload-alert" class="alert"></div>
+                <div id="prescriptions-content">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/patient.js"></script>
+</body>
+</html>
