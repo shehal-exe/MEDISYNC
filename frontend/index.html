@@ -3,41 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEDISYNC - Welcome</title>
+    <title>MEDISYNC - Your Health, Synchronized</title>
     <link rel="stylesheet" href="css/global.css">
     <style>
-        /* Animated Background */
-        body {
-            margin: 0;
-            padding: 0;
+        /* Hero Section */
+        .hero-section {
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(-45deg, #0056b3, #00a8cc, #e9ecef, #ffffff);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            font-family: var(--font-family);
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            animation: fadeInDown 1s ease;
         }
 
-        /* Glassmorphism Card */
+        .hero-quote {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            animation: fadeInUp 1s ease;
+            max-width: 600px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            animation: bounce 2s infinite;
+            color: var(--primary-color);
+            font-size: 2rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        /* Content Sections */
+        .section {
+            padding: 5rem 20px;
+            background: var(--white);
+        }
+
+        .section-alt {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            border-bottom: 4px solid var(--primary-color);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-text {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+
+        /* Glassmorphism Card (Login) */
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 4rem 20px;
+        }
+
         .glass-card {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 3rem;
-            width: 400px;
+            width: 100%;
+            max-width: 450px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             text-align: center;
             transition: all 0.5s ease;
-            position: relative;
-            overflow: hidden;
         }
 
         .glass-card.pharmacist-mode {
@@ -45,51 +130,6 @@
             border: 2px solid #28a745;
         }
 
-        .welcome-text {
-            font-size: 1.2rem;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-            animation: fadeInDown 1s ease;
-        }
-
-        .brand-name {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 2rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            animation: fadeInUp 1s ease;
-        }
-
-        .pharmacist-mode .brand-name {
-            color: #28a745;
-        }
-
-        /* Animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Form Elements */
-        .form-group {
-            text-align: left;
-            margin-bottom: 1.5rem;
-        }
-        .form-group label {
-            font-size: 0.9rem;
-            color: var(--text-dark);
-            margin-bottom: 0.3rem;
-        }
-        .form-group input {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #ddd;
-        }
-        
         .btn-login {
             width: 100%;
             padding: 1rem;
@@ -131,64 +171,105 @@
             font-weight: bold;
             transition: all 0.3s ease;
             border: 2px solid #ddd;
+            z-index: 1000;
         }
         .floating-btn:hover {
             transform: scale(1.05);
             border-color: #28a745;
             color: #28a745;
         }
-        .icon {
-            font-size: 1.5rem;
-        }
 
-        #portal-title {
-            font-weight: bold;
+        /* Footer */
+        footer {
+            background: var(--white);
+            padding: 2rem;
+            text-align: center;
             color: var(--text-light);
-            margin-bottom: 1.5rem;
-            display: block;
-        }
-
-        .register-link {
-            font-size: 0.9rem;
-            color: var(--text-light);
-        }
-        .register-link a {
-            color: var(--primary-color);
-            font-weight: bold;
-        }
-        .pharmacist-mode .register-link {
-            display: none; /* Hide registration on pharmacist view */
+            border-top: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
 
-    <!-- Main Login Card -->
-    <div class="glass-card" id="loginCard">
-        <div class="welcome-text">Welcome to</div>
-        <div class="brand-name">MEDISYNC</div>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1 class="hero-title">MEDISYNC</h1>
+        <p class="hero-quote">"Bridging the gap between intelligent care and seamless pharmacy management."</p>
         
-        <span id="portal-title">Patient Portal</span>
+        <a href="#portal" class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 1.2rem; border-radius: 30px;">Access Portal</a>
 
-        <div id="login-alert" class="alert"></div>
+        <a href="#about" class="scroll-indicator">↓</a>
+    </div>
 
-        <form id="login-form">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" required placeholder="Enter your email">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required placeholder="Enter your password">
-            </div>
-            
-            <button type="submit" class="btn-login" id="loginBtnText">Sign In</button>
-        </form>
-
-        <div class="register-link">
-            New here? <a href="register.html">Create an account</a>
+    <!-- About Section -->
+    <div id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">About Our Platform</h2>
+            <p class="about-text">
+                Medisync is a state-of-the-art health platform designed to connect patients directly with their local pharmacists. 
+                We eliminate the friction of lost prescriptions, missed dosages, and out-of-stock medications by bringing the entire 
+                pharmacy experience into a single, synchronized digital ecosystem.
+            </p>
         </div>
     </div>
+
+    <!-- Features Section -->
+    <div class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⏰</div>
+                    <h3>Smart Reminders</h3>
+                    <p>Never miss a dose. Patients receive daily schedules and can instantly log whether a medication was taken or skipped.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📄</div>
+                    <h3>Secure Prescriptions</h3>
+                    <p>Upload your paper prescriptions securely. Pharmacists review, verify, and automatically link them to your profile.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3>Integrated Pharmacy POS</h3>
+                    <p>Pharmacists can manage live inventory, process point-of-sale transactions, and monitor real-time revenue analytics.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Section -->
+    <div id="portal" class="section">
+        <h2 class="section-title">Access Your Portal</h2>
+        <div class="login-wrapper">
+            <div class="glass-card" id="loginCard">
+                <h3 id="portal-title" style="color: var(--primary-color); font-size: 1.8rem; margin-bottom: 2rem;">Patient Login</h3>
+
+                <div id="login-alert" class="alert"></div>
+
+                <form id="login-form">
+                    <div class="form-group" style="text-align: left;">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+                    <div class="form-group" style="text-align: left;">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required placeholder="Enter your password">
+                    </div>
+                    
+                    <button type="submit" class="btn-login" id="loginBtnText">Sign In</button>
+                </form>
+
+                <div class="register-link" id="registerLink" style="margin-top: 1rem;">
+                    New patient? <a href="register.html" style="color: var(--primary-color); font-weight: bold;">Create an account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 MEDISYNC Healthcare Solutions. All rights reserved.</p>
+    </footer>
 
     <!-- Floating Pharmacist Toggle -->
     <div class="floating-btn" id="pharmacistToggle">
@@ -196,13 +277,24 @@
         <span id="toggleText">Pharmacist Login</span>
     </div>
 
-    <script src="js/api.js?v=2"></script>
+    <script src="js/api.js?v=3"></script>
     <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
         // Toggle UI Logic
         const toggleBtn = document.getElementById('pharmacistToggle');
         const loginCard = document.getElementById('loginCard');
         const portalTitle = document.getElementById('portal-title');
         const toggleText = document.getElementById('toggleText');
+        const registerLink = document.getElementById('registerLink');
         
         let isPharmacistMode = false;
 
@@ -212,15 +304,22 @@
             if (isPharmacistMode) {
                 loginCard.classList.add('pharmacist-mode');
                 portalTitle.textContent = "Pharmacist Portal";
+                portalTitle.style.color = "#28a745";
                 toggleText.textContent = "Back to Patient Login";
+                registerLink.style.display = "none";
+                
+                // Scroll to portal if not already there
+                document.getElementById('portal').scrollIntoView({ behavior: 'smooth' });
             } else {
                 loginCard.classList.remove('pharmacist-mode');
-                portalTitle.textContent = "Patient Portal";
+                portalTitle.textContent = "Patient Login";
+                portalTitle.style.color = "var(--primary-color)";
                 toggleText.textContent = "Pharmacist Login";
+                registerLink.style.display = "block";
             }
         });
 
-        // Login Submission Logic (using our existing API backend)
+        // Login Submission Logic
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -244,7 +343,6 @@
             submitBtn.disabled = false;
 
             if (res && res.success) {
-                // Determine redirect based on actual backend role
                 const role = res.data.role;
                 if (role === 'PHARMACIST') {
                     window.location.href = '/pharmacist/dashboard.html';
