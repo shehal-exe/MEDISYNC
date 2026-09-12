@@ -103,6 +103,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/patients/**").hasRole("PATIENT")
                 .requestMatchers("/api/v1/patient/**").hasRole("PATIENT")
 
+                // Pharmacist-only endpoints
+                .requestMatchers("/api/v1/pharmacist/**").hasRole("PHARMACIST")
+
                 // Authenticated endpoints
                 .requestMatchers("/api/v1/auth/me").authenticated()
                 .requestMatchers("/api/v1/auth/logout").authenticated()
