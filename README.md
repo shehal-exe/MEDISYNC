@@ -72,8 +72,32 @@ Then navigate to `http://localhost:8000/index.html` in your browser.
 - **Java Tests**: Run unit and integration tests using Maven: `mvn test`
 - **API Testing**: Import the provided endpoints into Postman to test backend REST responses.
 
-## Git Workflow
-We use a feature-branch workflow.
-- **DO NOT** commit directly to `main`.
-- Create feature branches off `develop` (e.g., `git checkout -b feature/patient-login`).
-- After completing work, commit with clear prefixes (e.g., `feat: ...`, `fix: ...`) and open a Pull Request against `develop`.
+## 🚀 Team Collaboration Guide (How to Clone & Work Safely)
+To ensure the main codebase remains perfectly safe while the team writes and tests new code, we have set up a strict but easy-to-use Git workflow.
+
+### 1. Safely Cloning the Repository
+Team members should clone the repository to their local machines:
+```bash
+git clone https://github.com/shehal-exe/MEDISYNC.git
+cd MEDISYNC
+```
+
+### 2. The Safe "Sandbox" Branch
+**NEVER push directly to `main` or `develop`!** 
+To safely experiment, write frontend/backend code, and push changes without breaking the working app, team members should use the dedicated team sandbox branch or create their own:
+```bash
+# Fetch all latest branches
+git fetch --all
+
+# Switch to the safe team sandbox branch
+git checkout team-sandbox
+```
+
+### 3. Pushing Your Work safely
+When a team member finishes their frontend or backend feature:
+```bash
+git add .
+git commit -m "feat: added new UI changes"
+git push origin team-sandbox
+```
+This guarantees that any mistakes, bugs, or untested code are completely isolated in the `team-sandbox` branch. The Lead Developer can then review and merge it into `develop` when it's proven to work with the database!
