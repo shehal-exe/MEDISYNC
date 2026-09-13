@@ -84,13 +84,13 @@ cd MEDISYNC
 
 ### 2. The Safe "Sandbox" Branch
 **NEVER push directly to `main` or `develop`!** 
-To safely experiment, write frontend/backend code, and push changes without breaking the working app, team members should use the dedicated team sandbox branch or create their own:
+To safely experiment, write frontend/backend code, and push changes without breaking the working app, team members should use the dedicated clone repo branch or create their own:
 ```bash
 # Fetch all latest branches
 git fetch --all
 
-# Switch to the safe team sandbox branch
-git checkout team-sandbox
+# Switch to the safe clone branch
+git checkout clone-repo-for-work
 ```
 
 ### 3. Pushing Your Work safely
@@ -98,6 +98,6 @@ When a team member finishes their frontend or backend feature:
 ```bash
 git add .
 git commit -m "feat: added new UI changes"
-git push origin team-sandbox
+git push origin clone-repo-for-work
 ```
-This guarantees that any mistakes, bugs, or untested code are completely isolated in the `team-sandbox` branch. The Lead Developer can then review and merge it into `develop` when it's proven to work with the database!
+This guarantees that any mistakes, bugs, or untested code are completely isolated in the `clone-repo-for-work` branch. The Lead Developer can then review and merge it into `develop` when it's proven to work with the database!
