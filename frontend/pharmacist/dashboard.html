@@ -15,19 +15,19 @@
             </div>
             <nav class="sidebar-nav" id="sidebarNav">
                 <a href="#" class="sidebar-link active" data-target="view-dashboard">
-                    <span class="icon">??</span> Dashboard
+                    <span class="icon">📈</span> Dashboard
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-prescriptions">
-                    <span class="icon">?</span> Prescriptions
+                    <span class="icon">✅</span> Prescriptions
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-inventory">
-                    <span class="icon">??</span> Inventory & Stock
+                    <span class="icon">📦</span> Inventory & Stock
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-sales">
-                    <span class="icon">??</span> Point of Sale
+                    <span class="icon">💳</span> Point of Sale
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-reports">
-                    <span class="icon">??</span> Reports
+                    <span class="icon">📊</span> Reports
                 </a>
             </nav>
         </aside>
@@ -41,16 +41,16 @@
                 </div>
                 <div class="header-actions">
                     <div class="profile-btn" onclick="document.getElementById('profileMenu').classList.toggle('active')">
-                        ??
+                        👤
                     </div>
                     
                     <div class="profile-menu" id="profileMenu">
                         <div class="profile-menu-header">Manage Pharmacy</div>
                         <div class="profile-menu-item" onclick="document.getElementById('settingsModal').classList.add('active'); document.getElementById('profileMenu').classList.remove('active');">
-                            <span>??</span> Settings
+                            <span>⚙️</span> Settings
                         </div>
                         <div class="profile-menu-item danger" id="logout-btn">
-                            <span>??</span> Logout
+                            <span>🚪</span> Logout
                         </div>
                     </div>
                 </div>
@@ -74,14 +74,14 @@
                             </div>
                             <div style="flex: 1; text-align: center;">
                                 <h4 style="color: var(--text-light); margin-bottom: 0.5rem;">Today's Sales</h4>
-                                <h1 style="color: #28a745; font-size: 2.5rem; margin: 0;">.00</h1>
+                                <h1 style="color: #28a745; font-size: 2.5rem; margin: 0;">$145.00</h1>
                             </div>
                         </div>
 
                         <div class="card">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?? Weekly Revenue Trend</h3>
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">📈 Weekly Revenue Trend</h3>
                             <div class="empty-state">
-                                <div class="icon">??</div>
+                                <div class="icon">📊</div>
                                 <p>Revenue charts loading...</p>
                             </div>
                         </div>
@@ -90,13 +90,13 @@
                     <!-- RIGHT COLUMN -->
                     <div class="sidebar-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <div class="card">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?? Quick Actions</h3>
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">⏱️ Quick Actions</h3>
                             <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px; background: #28a745;" onclick="document.querySelector('[data-target=view-sales]').click();">New POS Sale</button>
                             <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="document.querySelector('[data-target=view-prescriptions]').click();">Verify Prescriptions</button>
                         </div>
                         
                         <div class="card">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?? Pharmacist Profile</h3>
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">👤 Pharmacist Profile</h3>
                             <div id="profile-content">
                                 <p>Loading...</p>
                             </div>
@@ -108,10 +108,10 @@
             <!-- VIEW: PRESCRIPTIONS -->
             <section id="view-prescriptions" class="view-section">
                 <div class="card">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">? Prescription Verification Queue</h3>
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">✅ Prescription Verification Queue</h3>
                     <div id="prescriptions-content" class="table-responsive">
                         <div class="empty-state">
-                            <div class="icon">??</div>
+                            <div class="icon">⚙️</div>
                             <p>Loading pending prescriptions...</p>
                         </div>
                     </div>
@@ -122,7 +122,7 @@
             <section id="view-inventory" class="view-section">
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h3 style="color: var(--text-dark);">?? Inventory & Expiry Monitor</h3>
+                        <h3 style="color: var(--text-dark);">📦 Inventory & Expiry Monitor</h3>
                         <div style="display: flex; gap: 10px;">
                             <input type="text" placeholder="Search medicines..." class="form-group" style="margin-bottom: 0; padding: 0.5rem; border-radius: 6px; border: 1px solid #ddd;">
                             <button class="btn btn-primary">+ Add Stock</button>
@@ -130,7 +130,7 @@
                     </div>
                     <div id="inventory-content" class="table-responsive">
                         <div class="empty-state">
-                            <div class="icon">??</div>
+                            <div class="icon">⚙️</div>
                             <p>Loading inventory...</p>
                         </div>
                     </div>
@@ -140,9 +140,9 @@
             <!-- VIEW: SALES / POS -->
             <section id="view-sales" class="view-section">
                 <div class="card">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">?? Point of Sale</h3>
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">💳 Point of Sale</h3>
                     <div class="empty-state">
-                        <div class="icon">??</div>
+                        <div class="icon">💳</div>
                         <p>POS interface loading...</p>
                     </div>
                 </div>
@@ -151,9 +151,9 @@
             <!-- VIEW: REPORTS -->
             <section id="view-reports" class="view-section">
                 <div class="card">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">?? Analytics & Reports</h3>
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">📊 Analytics & Reports</h3>
                     <div class="empty-state">
-                        <div class="icon">??</div>
+                        <div class="icon">📈</div>
                         <p>Report generation tools loading...</p>
                     </div>
                 </div>
@@ -241,8 +241,8 @@
         window.showToast = function(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = "toast  + type + ";
-            toast.innerHTML = "<span>" + message + "</span>";
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 4000);
         }

@@ -15,19 +15,19 @@
             </div>
             <nav class="sidebar-nav" id="sidebarNav">
                 <a href="#" class="sidebar-link active" data-target="view-dashboard">
-                    <span class="icon">??</span> Dashboard
+                    <span class="icon">📊</span> Dashboard
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-medicines">
-                    <span class="icon">??</span> My Medicines
+                    <span class="icon">💊</span> My Medicines
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-schedule">
-                    <span class="icon">??</span> Schedule
+                    <span class="icon">📅</span> Schedule
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-prescriptions">
-                    <span class="icon">??</span> Prescriptions
+                    <span class="icon">📄</span> Prescriptions
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-notifications">
-                    <span class="icon">??</span> Notifications
+                    <span class="icon">🔔</span> Notifications
                 </a>
             </nav>
         </aside>
@@ -41,16 +41,16 @@
                 </div>
                 <div class="header-actions">
                     <div class="profile-btn" onclick="document.getElementById('profileMenu').classList.toggle('active')">
-                        ??
+                        👤
                     </div>
                     
                     <div class="profile-menu" id="profileMenu">
                         <div class="profile-menu-header">Manage Account</div>
                         <div class="profile-menu-item" onclick="document.getElementById('settingsModal').classList.add('active'); document.getElementById('profileMenu').classList.remove('active');">
-                            <span>??</span> Settings
+                            <span>⚙️</span> Settings
                         </div>
                         <div class="profile-menu-item danger" id="logout-btn">
-                            <span>??</span> Logout
+                            <span>🚪</span> Logout
                         </div>
                     </div>
                 </div>
@@ -70,10 +70,10 @@
 
                         <!-- Reminders are the most urgent -->
                         <div class="card">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?? Action Required Today</h3>
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">🚨 Action Required Today</h3>
                             <div id="reminders-content">
                                 <div class="empty-state">
-                                    <div class="icon">??</div>
+                                    <div class="icon">⚙️</div>
                                     <p>Loading your schedule...</p>
                                 </div>
                             </div>
@@ -84,10 +84,10 @@
                     <div class="sidebar-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <!-- Profile Snapshot -->
                         <div class="card">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?? Profile Snapshot</h3>
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">👤 Profile Snapshot</h3>
                             <div id="profile-content">
                                 <div class="empty-state">
-                                    <div class="icon">??</div>
+                                    <div class="icon">⚙️</div>
                                     <p>Loading profile...</p>
                                 </div>
                             </div>
@@ -95,7 +95,7 @@
 
                         <!-- Mini Adherence Widget -->
                         <div class="card">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?? Weekly Adherence</h3>
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">📈 Weekly Adherence</h3>
                             <div style="text-align: center; padding: 1rem 0;">
                                 <h1 style="font-size: 3rem; color: #28a745; margin: 0;" id="adherence-score">--%</h1>
                                 <p style="color: var(--text-light);">Great job staying on track!</p>
@@ -109,12 +109,12 @@
             <section id="view-medicines" class="view-section">
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h3 style="color: var(--text-dark);">?? Active Medications</h3>
+                        <h3 style="color: var(--text-dark);">💊 Active Medications</h3>
                         <button class="btn btn-primary" onclick="alert('Feature to self-add OTC medicines coming soon.')">+ Add Medicine</button>
                     </div>
                     <div id="medications-content" class="table-responsive">
                         <div class="empty-state">
-                            <div class="icon">??</div>
+                            <div class="icon">⚙️</div>
                             <p>Loading your medications...</p>
                         </div>
                     </div>
@@ -124,9 +124,9 @@
             <!-- VIEW: SCHEDULE -->
             <section id="view-schedule" class="view-section">
                 <div class="card">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">?? Medication Schedule & Adherence</h3>
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">📅 Medication Schedule & Adherence</h3>
                     <div class="empty-state">
-                        <div class="icon">??</div>
+                        <div class="icon">🚧</div>
                         <p>Detailed adherence logs are being prepared for your portal.</p>
                     </div>
                 </div>
@@ -135,7 +135,7 @@
             <!-- VIEW: PRESCRIPTIONS -->
             <section id="view-prescriptions" class="view-section">
                 <div class="card" style="margin-bottom: 1.5rem;">
-                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?? Upload Prescription</h3>
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">📄 Upload Prescription</h3>
                     <form id="upload-prescription-form" style="display: flex; gap: 10px; align-items: flex-end;">
                         <div class="form-group" style="margin-bottom: 0; flex: 1;">
                             <label for="prescriptionFile">Prescription Document (Image/PDF)</label>
@@ -151,10 +151,10 @@
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">?? My Prescriptions</h3>
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">📋 My Prescriptions</h3>
                     <div id="prescriptions-content" class="table-responsive">
                         <div class="empty-state">
-                            <div class="icon">??</div>
+                            <div class="icon">⚙️</div>
                             <p>Loading your prescriptions...</p>
                         </div>
                     </div>
@@ -165,11 +165,11 @@
             <section id="view-notifications" class="view-section">
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h3 style="color: var(--text-dark);">?? Notifications</h3>
+                        <h3 style="color: var(--text-dark);">🔔 Notifications</h3>
                         <button class="btn" style="background: var(--bg-light); color: var(--text-dark);">Mark all as read</button>
                     </div>
                     <div class="empty-state">
-                        <div class="icon">??</div>
+                        <div class="icon">📭</div>
                         <p>You have no new notifications.</p>
                     </div>
                 </div>
@@ -266,8 +266,8 @@
         window.showToast = function(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = "toast  + type + ";
-            toast.innerHTML = "<span>" + message + "</span>";
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 4000);
         }
