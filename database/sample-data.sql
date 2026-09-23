@@ -27,16 +27,16 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- 2. USERS & ROLES
 -- Real Pharmacist Setup
 INSERT INTO User (user_id, email, password_hash) VALUES 
-(1, 'pharmacist_real@medisync.com', '\\\.U4yA.K.t1.oB12m02'); -- password123
+(1, 'pharmacist_real@medisync.com', '$2a$10$8IKbQOgbc18YpZXbNLCV2uuTAewFbnFHQho2DZrWUn4ZF225pmTiK'); -- password123
 INSERT INTO Role (user_id, role_name) VALUES (1, 'PHARMACIST');
 INSERT INTO PharmacistProfile (pharmacist_id, user_id, first_name, last_name, license_number) VALUES 
 (1, 1, 'Dr. Admin', 'Smith', 'PH-99999');
 
 -- Dummy Patients
 INSERT INTO User (user_id, email, password_hash) VALUES 
-(2, 'test_patient@medisync.com', '\\\.U4yA.K.t1.oB12m02'),
-(3, 'arun.thomas@medisync.test', '\\\.U4yA.K.t1.oB12m02'),
-(4, 'anjali.menon@medisync.test', '\\\.U4yA.K.t1.oB12m02');
+(2, 'test_patient@medisync.com', '$2a$10$8IKbQOgbc18YpZXbNLCV2uuTAewFbnFHQho2DZrWUn4ZF225pmTiK'),
+(3, 'arun.thomas@medisync.test', '$2a$10$8IKbQOgbc18YpZXbNLCV2uuTAewFbnFHQho2DZrWUn4ZF225pmTiK'),
+(4, 'anjali.menon@medisync.test', '$2a$10$8IKbQOgbc18YpZXbNLCV2uuTAewFbnFHQho2DZrWUn4ZF225pmTiK');
 
 INSERT INTO Role (user_id, role_name) VALUES 
 (2, 'PATIENT'),
@@ -123,3 +123,4 @@ INSERT INTO SaleItem (sale_item_id, sale_id, batch_id, quantity, price_at_sale) 
 (2, 2, 3, 30, 0.80);
 
 -- END DEMO DATA
+
