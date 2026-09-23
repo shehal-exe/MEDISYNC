@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    
     // 1. Check Auth & Load User
     const meRes = await fetchApi('/auth/me');
     if (!meRes || !meRes.success || meRes.data.role !== 'PATIENT') {
         window.location.href = '../index.html';
         return;
     }
-    document.getElementById('user-greeting').textContent = `Hello, ${meRes.data.email}`;
+    
+    // We expect meRes.data.email to exist. We will set the top greeting.
+    document.getElementById('user-greeting').textContent = Hello, \;
 
     // Logout
     document.getElementById('logout-btn').addEventListener('click', async (e) => {
@@ -15,128 +16,132 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '../index.html';
     });
 
-    // Load Profile
+    // 2. Data Loaders for each View
     async function loadProfile() {
         const res = await fetchApi('/patients/me');
         const container = document.getElementById('profile-content');
         if (res && res.success) {
             const p = res.data;
-            container.innerHTML = `
-                <p><strong>Name:</strong> ${p.firstName} ${p.lastName}</p>
-                <p><strong>DOB:</strong> ${p.dateOfBirth}</p>
-                <p><strong>Contact:</strong> ${p.contactNumber || 'N/A'}</p>
-                <p><strong>Address:</strong> ${p.address || 'N/A'}</p>
-                <p><strong>Medical History:</strong> ${p.medicalHistory || 'None recorded'}</p>
-            `;
+            container.innerHTML = 
+                <div style="font-size: 1.1rem; margin-bottom: 10px;"><strong>\ \</strong></div>
+                <div style="color: var(--text-light); margin-bottom: 5px;">?? \</div>
+                <div style="color: var(--text-light); margin-bottom: 5px;">?? \</div>
+            ;
+            // Fill Settings inputs too
+            document.getElementById('set-name').value = \ \;
+            document.getElementById('set-phone').value = p.contactNumber || '';
         } else {
-            container.innerHTML = `<p style="color:red">Failed to load profile.</p>`;
+            container.innerHTML = <div class="empty-state"><p style="color:red">Failed to load profile.</p></div>;
         }
     }
 
-    // 3. Load Medications & Schedules
-    async function loadMedications() {
-        const res = await fetchApi('/patient/medication-schedules');
-        const container = document.getElementById('medications-content');
-        if (res && res.success) {
-            if (res.data.length === 0) {
-                container.innerHTML = `<p>No medications scheduled.</p>`;
-                return;
-            }
-            let html = `<table>
-                <thead>
-                    <tr>
-                        <th>Medicine</th>
-                        <th>Dosage</th>
-                        <th>Frequency</th>
-                        <th>Time</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-            res.data.forEach(s => {
-                html += `
-                    <tr>
-                        <td><strong>${s.medicineName}</strong></td>
-                        <td>${s.dosage}</td>
-                        <td>${s.frequency}</td>
-                        <td>${s.timeOfDay}</td>
-                        <td>${s.isActive ? '<span style="color:green">Active</span>' : '<span style="color:gray">Inactive</span>'}</td>
-                    </tr>
-                `;
-            });
-            html += `</tbody></table>`;
-            container.innerHTML = html;
-        } else {
-            container.innerHTML = `<p style="color:red">Failed to load medications.</p>`;
-        }
-    }
-
-    // 4. Load Reminders
     async function loadReminders() {
         const res = await fetchApi('/patient/reminders');
         const container = document.getElementById('reminders-content');
         if (res && res.success) {
             if (res.data.length === 0) {
-                container.innerHTML = `<p style="color:green">✅ You are all caught up for today!</p>`;
+                container.innerHTML = <div class="empty-state"><div class="icon">?</div><p>You are all caught up for today!</p></div>;
                 return;
             }
             let html = '';
             res.data.forEach(r => {
-                html += `
-                    <div class="reminder-card">
-                        <h4>${r.medicineName}</h4>
-                        <p><strong>Dosage:</strong> ${r.dosage}</p>
-                        <p><strong>Time:</strong> ${r.timeOfDay}</p>
-                        <div class="reminder-actions">
-                            <button class="btn btn-primary" onclick="markReminder(${r.scheduleId}, 'TAKEN')">Take</button>
-                            <button class="btn" style="background:#dc3545; color:white; margin-left:10px;" onclick="markReminder(${r.scheduleId}, 'SKIPPED')">Skip</button>
+                html += 
+                    <div class="reminder-card" style="border-left: 4px solid var(--warning); background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 5px 0;">\</h4>
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">Dosage: \ at \</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="markReminder(\, 'TAKEN')">Take</button>
+                            <button class="btn" style="background:#dc3545; color:white; margin-left:5px;" onclick="markReminder(\, 'SKIPPED')">Skip</button>
                         </div>
                     </div>
-                `;
+                ;
             });
             container.innerHTML = html;
         } else {
-            container.innerHTML = `<p style="color:red">Failed to load reminders.</p>`;
+            container.innerHTML = <p style="color:red">Failed to load reminders.</p>;
         }
     }
 
-    // 5. Load Prescriptions
+    async function loadMedications() {
+        const res = await fetchApi('/patient/medication-schedules');
+        const container = document.getElementById('medications-content');
+        if (res && res.success) {
+            if (res.data.length === 0) {
+                container.innerHTML = <div class="empty-state"><div class="icon">??</div><p>No active medications.</p></div>;
+                return;
+            }
+            let html = <table>
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Dosage</th>
+                        <th>Schedule</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>;
+            res.data.forEach(s => {
+                const statusBadge = s.isActive ? '<span class="badge success">ACTIVE</span>' : '<span class="badge warning">INACTIVE</span>';
+                html += 
+                    <tr>
+                        <td><strong>\</strong></td>
+                        <td>\</td>
+                        <td>\ at \</td>
+                        <td>\</td>
+                        <td><button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="alert('Viewing details')">View</button></td>
+                    </tr>
+                ;
+            });
+            html += </tbody></table>;
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = <p style="color:red">Failed to load medications.</p>;
+        }
+    }
+
     async function loadPrescriptions() {
         const res = await fetchApi('/patient/prescriptions');
         const container = document.getElementById('prescriptions-content');
         if (res && res.success) {
             if (res.data.length === 0) {
-                container.innerHTML = `<p>No prescriptions uploaded.</p>`;
+                container.innerHTML = <div class="empty-state"><div class="icon">??</div><p>No prescriptions uploaded.</p></div>;
                 return;
             }
-            let html = `<table>
+            let html = <table>
                 <thead>
                     <tr>
-                        <th>Date</th>
+                        <th>Upload Date</th>
                         <th>File</th>
-                        <th>Status</th>
-                        <th>Notes</th>
+                        <th>Verification Status</th>
+                        <th>Pharmacist Notes</th>
                     </tr>
                 </thead>
-                <tbody>`;
+                <tbody>;
             res.data.forEach(p => {
-                html += `
+                let badgeClass = 'warning';
+                if (p.status === 'VERIFIED') badgeClass = 'success';
+                if (p.status === 'REJECTED') badgeClass = 'danger';
+
+                html += 
                     <tr>
-                        <td>${new Date(p.uploadDate).toLocaleDateString()}</td>
-                        <td><a href="http://localhost:8080/api/v1/patient/prescriptions/files/${p.filePath}" target="_blank">View File</a></td>
-                        <td><span class="badge ${p.status}">${p.status}</span></td>
-                        <td>${p.notes || '-'}</td>
+                        <td>\</td>
+                        <td><a href="http://localhost:8080\" target="_blank" style="color: var(--primary-color); font-weight: 500;">View Document</a></td>
+                        <td><span class="badge \">\</span></td>
+                        <td style="color: #666; font-style: italic;">\</td>
                     </tr>
-                `;
+                ;
             });
-            html += `</tbody></table>`;
+            html += </tbody></table>;
             container.innerHTML = html;
         } else {
-            container.innerHTML = `<p style="color:red">Failed to load prescriptions.</p>`;
+            container.innerHTML = <p style="color:red">Failed to load prescriptions.</p>;
         }
     }
 
-    // Handle Upload Prescription
+    // Prescription Upload
     document.getElementById('upload-prescription-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const fileInput = document.getElementById('prescriptionFile');
@@ -160,37 +165,42 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             const result = await response.json();
             if (result.success) {
-                alertBox.textContent = 'Prescription uploaded successfully!';
-                alertBox.className = 'alert success';
-                fileInput.value = ''; // clear
+                window.showToast('Prescription securely uploaded!', 'success');
+                fileInput.value = '';
+                document.getElementById('prescriptionNotes').value = '';
                 loadPrescriptions();
             } else {
-                alertBox.textContent = result.message || 'Upload failed.';
-                alertBox.className = 'alert error';
+                window.showToast(result.message || 'Upload failed.', 'error');
             }
         } catch (err) {
-            alertBox.textContent = 'Upload failed. Network error.';
-            alertBox.className = 'alert error';
+            window.showToast('Upload failed. Network error.', 'error');
         }
         
         btn.disabled = false;
-        btn.innerText = 'Upload';
+        btn.innerText = 'Upload securely';
     });
 
-    // Make markReminder global so inline onclick can see it
     window.markReminder = async function(scheduleId, status) {
-        const endpoint = status === 'TAKEN' ? `/patient/reminders/${scheduleId}/taken` : `/patient/reminders/${scheduleId}/skipped`;
+        const endpoint = status === 'TAKEN' ? /patient/reminders/\/taken : /patient/reminders/\/skipped;
         const res = await fetchApi(endpoint, { method: 'POST' });
         if (res && res.success) {
-            loadReminders(); // Refresh the list
+            window.showToast(Marked as \, status === 'TAKEN' ? 'success' : 'warning');
+            loadReminders(); 
         } else {
-            alert(res.message || 'Failed to update reminder.');
+            window.showToast(res.message || 'Failed to update reminder.', 'error');
         }
     };
 
-    // Initial Load
+    // Calculate Fake Adherence for Dashboard Demo
+    function setAdherenceScore() {
+        const score = Math.floor(Math.random() * (98 - 75 + 1)) + 75; // random between 75 and 98
+        document.getElementById('adherence-score').textContent = \%;
+    }
+
+    // Initialize all data
     loadProfile();
-    loadMedications();
     loadReminders();
+    loadMedications();
     loadPrescriptions();
+    setAdherenceScore();
 });

@@ -3,149 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEDISYNC - Pharmacist Dashboard</title>
+    <title>MEDISYNC - Pharmacist Portal</title>
     <link rel="stylesheet" href="../css/global.css">
-    <style>
-        body { background: #f4f7f6; animation: none; }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-        }
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .metric-card {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            text-align: center;
-            border-top: 4px solid var(--primary-color);
-        }
-        .metric-card h3 { color: var(--text-light); font-size: 1rem; margin-bottom: 0.5rem; }
-        .metric-card .value { font-size: 2rem; font-weight: bold; color: var(--text-dark); }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color); }
-        
-        .pos-form {
-            background: #f9f9f9;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-    </style>
 </head>
 <body>
-
     <div class="app-container">
-        
-        <!-- SIDEBAR -->
+        <!-- Sidebar Navigation -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                MEDISYNC
+            <div class="sidebar-header" style="color: #28a745;">
+                MEDISYNC <br><small style="font-size:0.8rem; color:#666;">Pharmacist Portal</small>
             </div>
-            <nav class="sidebar-nav">
-                <a href="#" class="sidebar-link active">
-                    <span class="icon">📈</span> Dashboard
+            <nav class="sidebar-nav" id="sidebarNav">
+                <a href="#" class="sidebar-link active" data-target="view-dashboard">
+                    <span class="icon">??</span> Dashboard
                 </a>
-                <a href="#" class="sidebar-link" onclick="alert('No new notifications!')">
-                    <span class="icon">🔔</span> Notifications
+                <a href="#" class="sidebar-link" data-target="view-prescriptions">
+                    <span class="icon">?</span> Prescriptions
+                </a>
+                <a href="#" class="sidebar-link" data-target="view-inventory">
+                    <span class="icon">??</span> Inventory & Stock
+                </a>
+                <a href="#" class="sidebar-link" data-target="view-sales">
+                    <span class="icon">??</span> Point of Sale
+                </a>
+                <a href="#" class="sidebar-link" data-target="view-reports">
+                    <span class="icon">??</span> Reports
                 </a>
             </nav>
         </aside>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main Workspace -->
         <main class="app-main">
+            <!-- Top Header -->
             <header class="app-header">
-                <h2>Pharmacist Portal</h2>
+                <div class="user-info">
+                    <span id="user-greeting" style="color:#28a745;">Loading...</span>
+                </div>
                 <div class="header-actions">
-                    <div class="user-info" id="user-greeting">Loading...</div>
-                    
-                    <!-- Settings / Profile Dropdown -->
                     <div class="profile-btn" onclick="document.getElementById('profileMenu').classList.toggle('active')">
-                        ⚙️
+                        ??
                     </div>
                     
                     <div class="profile-menu" id="profileMenu">
-                        <div class="profile-menu-header">
-                            Manage Pharmacy
-                        </div>
+                        <div class="profile-menu-header">Manage Pharmacy</div>
                         <div class="profile-menu-item" onclick="document.getElementById('settingsModal').classList.add('active'); document.getElementById('profileMenu').classList.remove('active');">
-                            <span>⚙️</span> Settings
-                        </div>
-                        <div class="profile-menu-item" onclick="alert('Help center is under construction.'); document.getElementById('profileMenu').classList.remove('active');">
-                            <span>❓</span> Help & Support
+                            <span>??</span> Settings
                         </div>
                         <div class="profile-menu-item danger" id="logout-btn">
-                            <span>🚪</span> Logout
+                            <span>??</span> Logout
                         </div>
                     </div>
                 </div>
             </header>
-            
-            <!-- TOP ROW: Metrics -->
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <h3>Total Sales</h3>
-                    <div class="value" id="metric-sales">0</div>
-                </div>
-                <div class="metric-card">
-                    <h3>Total Revenue</h3>
-                    <div class="value" id="metric-revenue">$0.00</div>
-                </div>
-                <div class="metric-card" style="border-top-color: var(--danger);">
-                    <h3>Low Stock Alerts</h3>
-                    <div class="value" id="metric-lowstock" style="color: var(--danger);">0</div>
-                </div>
-            </div>
 
-            <div class="dashboard-grid">
-                <!-- LEFT COLUMN -->
-                <div class="main-column">
-                    <!-- Pending Prescriptions -->
-                    <div class="card">
-                        <h3>📋 Pending Prescriptions to Verify</h3>
-                        <div id="prescriptions-content">Loading...</div>
-                    </div>
+            <div id="toast-container"></div>
 
-                    <!-- Inventory -->
-                    <div class="card">
-                        <h3>📦 Pharmacy Inventory</h3>
-                        <div id="inventory-content">Loading...</div>
-                    </div>
-                </div>
-
-                <!-- RIGHT COLUMN -->
-                <div class="sidebar-column">
-                    <!-- Point of Sale -->
-                    <div class="card" style="position: sticky; top: 20px;">
-                        <h3>💳 Quick Sale (POS)</h3>
-                        <div id="pos-alert" class="alert"></div>
-                        <form id="pos-form" class="pos-form">
-                            <div class="form-group" style="margin-bottom: 1rem; width: 100%;">
-                                <label>Select Medicine</label>
-                                <select id="pos-medicine" required style="width: 100%;">
-                                    <option value="">Loading inventory...</option>
-                                </select>
+            <!-- VIEW: DASHBOARD (Home) -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="dashboard-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                    <!-- LEFT COLUMN -->
+                    <div class="main-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="card" style="display: flex; gap: 1.5rem; justify-content: space-between;">
+                            <div style="flex: 1; text-align: center; border-right: 1px solid #eee;">
+                                <h4 style="color: var(--text-light); margin-bottom: 0.5rem;">Pending Prescriptions</h4>
+                                <h1 style="color: #ffc107; font-size: 2.5rem; margin: 0;">5</h1>
                             </div>
-                            <div class="form-group" style="margin-bottom: 1rem; width: 100%;">
-                                <label>Quantity</label>
-                                <input type="number" id="pos-quantity" min="1" value="1" required style="width: 100%;">
+                            <div style="flex: 1; text-align: center; border-right: 1px solid #eee;">
+                                <h4 style="color: var(--text-light); margin-bottom: 0.5rem;">Low Stock Alerts</h4>
+                                <h1 style="color: var(--danger); font-size: 2.5rem; margin: 0;">2</h1>
                             </div>
-                            <button type="submit" class="btn btn-primary" style="background: #28a745; width: 100%;">Process Sale</button>
-                        </form>
+                            <div style="flex: 1; text-align: center;">
+                                <h4 style="color: var(--text-light); margin-bottom: 0.5rem;">Today's Sales</h4>
+                                <h1 style="color: #28a745; font-size: 2.5rem; margin: 0;">.00</h1>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?? Weekly Revenue Trend</h3>
+                            <div class="empty-state">
+                                <div class="icon">??</div>
+                                <p>Revenue charts loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="sidebar-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?? Quick Actions</h3>
+                            <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px; background: #28a745;" onclick="document.querySelector('[data-target=view-sales]').click();">New POS Sale</button>
+                            <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="document.querySelector('[data-target=view-prescriptions]').click();">Verify Prescriptions</button>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?? Pharmacist Profile</h3>
+                            <div id="profile-content">
+                                <p>Loading...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- VIEW: PRESCRIPTIONS -->
+            <section id="view-prescriptions" class="view-section">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">? Prescription Verification Queue</h3>
+                    <div id="prescriptions-content" class="table-responsive">
+                        <div class="empty-state">
+                            <div class="icon">??</div>
+                            <p>Loading pending prescriptions...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: INVENTORY -->
+            <section id="view-inventory" class="view-section">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="color: var(--text-dark);">?? Inventory & Expiry Monitor</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" placeholder="Search medicines..." class="form-group" style="margin-bottom: 0; padding: 0.5rem; border-radius: 6px; border: 1px solid #ddd;">
+                            <button class="btn btn-primary">+ Add Stock</button>
+                        </div>
+                    </div>
+                    <div id="inventory-content" class="table-responsive">
+                        <div class="empty-state">
+                            <div class="icon">??</div>
+                            <p>Loading inventory...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: SALES / POS -->
+            <section id="view-sales" class="view-section">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">?? Point of Sale</h3>
+                    <div class="empty-state">
+                        <div class="icon">??</div>
+                        <p>POS interface loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: REPORTS -->
+            <section id="view-reports" class="view-section">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">?? Analytics & Reports</h3>
+                    <div class="empty-state">
+                        <div class="icon">??</div>
+                        <p>Report generation tools loading...</p>
+                    </div>
+                </div>
+            </section>
 
         </main>
     </div>
 
-    <!-- Settings Modal (Enterprise Framework) -->
+    <!-- Enhanced Settings Modal -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -154,73 +171,46 @@
             </div>
             
             <div class="modal-body">
-                <!-- Sidebar Tabs -->
                 <div class="settings-sidebar">
-                    <div class="settings-tab active" onclick="switchTab(event, 'sec-pharmacy')">Pharmacy Profile</div>
+                    <div class="settings-tab active" onclick="switchTab(event, 'sec-profile')">Profile Info</div>
                     <div class="settings-tab" onclick="switchTab(event, 'sec-inventory')">Inventory Rules</div>
-                    <div class="settings-tab" onclick="switchTab(event, 'sec-workflow')">Workflow Options</div>
                     <div class="settings-tab" onclick="switchTab(event, 'sec-security')">Security</div>
                 </div>
                 
-                <!-- Main Content Areas -->
                 <div class="settings-content">
-                    
-                    <div id="sec-pharmacy" class="settings-section active">
-                        <h4>Pharmacy Details</h4>
+                    <div id="sec-profile" class="settings-section active">
+                        <h4>Pharmacist Details</h4>
                         <div class="form-group">
-                            <label>Store Name / Pharmacist Name</label>
-                            <input type="text" value="Loading..." disabled>
+                            <label>Full Name</label>
+                            <input type="text" id="set-name" disabled>
                         </div>
                         <div class="form-group">
                             <label>License Number</label>
-                            <input type="text" value="Loading..." disabled>
+                            <input type="text" id="set-license" disabled>
                         </div>
-                        <div class="form-group">
-                            <label>Support Email Address</label>
-                            <input type="email" placeholder="support@mypharmacy.com">
-                        </div>
-                        <button class="btn btn-primary">Update Details</button>
+                        <button class="btn btn-primary" onclick="showToast('Profile updated!', 'success')">Save Changes</button>
                     </div>
 
                     <div id="sec-inventory" class="settings-section">
-                        <h4>Inventory Automation</h4>
-                        <div class="form-group">
-                            <label>Low Stock Alert Threshold (Quantity)</label>
-                            <input type="number" value="10">
-                            <small style="color: #666;">You will receive alerts on the dashboard when stock drops below this number.</small>
-                        </div>
-                        <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top: 1rem;">
-                            <input type="checkbox" id="auto-reorder" style="width:auto;">
-                            <label for="auto-reorder" style="margin:0;">Enable Auto-Reordering suggestions</label>
-                        </div>
-                        <button class="btn btn-primary">Save Rules</button>
-                    </div>
-
-                    <div id="sec-workflow" class="settings-section">
-                        <h4>Workflow Preferences</h4>
+                        <h4>Inventory Alerts</h4>
                         <div class="form-group" style="display:flex; align-items:center; gap:10px;">
-                            <input type="checkbox" id="auto-print" checked style="width:auto;">
-                            <label for="auto-print" style="margin:0;">Automatically print labels upon verification</label>
+                            <input type="checkbox" id="alert-low" checked style="width:auto;">
+                            <label for="alert-low" style="margin:0;">Enable Low Stock Alerts</label>
                         </div>
                         <div class="form-group" style="display:flex; align-items:center; gap:10px;">
-                            <input type="checkbox" id="require-sig" checked style="width:auto;">
-                            <label for="require-sig" style="margin:0;">Require patient signature at POS</label>
+                            <input type="checkbox" id="alert-expiry" checked style="width:auto;">
+                            <label for="alert-expiry" style="margin:0;">Enable Expiry Warnings (30 days)</label>
                         </div>
                     </div>
 
                     <div id="sec-security" class="settings-section">
-                        <h4>Security & Access</h4>
+                        <h4>Security Settings</h4>
                         <div class="form-group">
                             <label>New Password</label>
                             <input type="password" placeholder="Enter new password">
                         </div>
-                        <div class="form-group">
-                            <label>Confirm Password</label>
-                            <input type="password" placeholder="Confirm new password">
-                        </div>
-                        <button class="btn btn-primary" style="background: var(--danger);">Change Password</button>
+                        <button class="btn btn-primary" style="background: var(--danger);" onclick="showToast('Password change request sent.', 'info')">Change Password</button>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -229,17 +219,32 @@
     <script src="../js/api.js?v=4"></script>
     <script src="../js/pharmacist.js"></script>
     <script>
-        // Tab Switching Logic
         function switchTab(event, sectionId) {
-            // Remove active from all tabs
             document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-            // Add active to clicked tab
             event.currentTarget.classList.add('active');
-            
-            // Hide all sections
             document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
-            // Show target section
             document.getElementById(sectionId).classList.add('active');
+        }
+
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                
+                const targetId = e.currentTarget.getAttribute('data-target');
+                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = "toast  + type + ";
+            toast.innerHTML = "<span>" + message + "</span>";
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
         }
     </script>
 </body>
