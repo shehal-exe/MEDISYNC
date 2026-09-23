@@ -1,5 +1,5 @@
 -- MEDISYNC - Comprehensive Sample Data (Demo Purposes Only)
-USE medisync_db;
+USE medisync;
 
 -- 1. CLEAN UP EXISTING DATA
 SET FOREIGN_KEY_CHECKS = 0;

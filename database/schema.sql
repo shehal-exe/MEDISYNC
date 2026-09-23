@@ -1,7 +1,7 @@
 -- MEDISYNC - Database Schema
 
-CREATE DATABASE IF NOT EXISTS medisync_db;
-USE medisync_db;
+CREATE DATABASE IF NOT EXISTS medisync;
+USE medisync;
 
 -- 1. User Table
 CREATE TABLE IF NOT EXISTS User (
