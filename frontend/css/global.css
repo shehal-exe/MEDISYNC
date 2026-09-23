@@ -531,3 +531,59 @@ table td {
     from { transform: translateY(100%); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .settings-sidebar {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0;
+    }
+    .settings-tab {
+        white-space: nowrap;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+    }
+    .settings-tab.active {
+        border-left-color: transparent;
+        border-bottom-color: var(--primary-color);
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        overflow: hidden;
+    }
+    .sidebar-header {
+        font-size: 0.8rem;
+        padding: 1rem 0.5rem;
+        text-align: center;
+    }
+    .sidebar-link {
+        padding: 1rem;
+        justify-content: center;
+    }
+    .sidebar-link span:not(.icon) {
+        display: none;
+    }
+    .app-main {
+        margin-left: 70px;
+        padding: 1rem;
+    }
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
