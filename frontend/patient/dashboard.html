@@ -3,75 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEDISYNC - Patient Dashboard</title>
+    <title>MEDISYNC - Patient Portal</title>
     <link rel="stylesheet" href="../css/global.css">
-    <style>
-        body { background: #f4f7f6; animation: none; }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-        }
-        .reminder-card {
-            border-left: 4px solid var(--danger);
-            background: #fff8f8;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-        }
-        .badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-        .badge.PENDING { background: #ffeeba; color: #856404; }
-        .badge.VERIFIED { background: #d4edda; color: #155724; }
-        .badge.REJECTED { background: #f8d7da; color: #721c24; }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color); }
-    </style>
 </head>
 <body>
-
     <div class="app-container">
-        
-        <!-- SIDEBAR -->
+        <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 MEDISYNC
             </div>
-            <nav class="sidebar-nav">
-                <a href="#" class="sidebar-link active">
+            <nav class="sidebar-nav" id="sidebarNav">
+                <a href="#" class="sidebar-link active" data-target="view-dashboard">
                     <span class="icon">📊</span> Dashboard
                 </a>
-                <a href="#" class="sidebar-link" onclick="alert('No new notifications!')">
+                <a href="#" class="sidebar-link" data-target="view-medicines">
+                    <span class="icon">💊</span> My Medicines
+                </a>
+                <a href="#" class="sidebar-link" data-target="view-schedule">
+                    <span class="icon">📅</span> Schedule
+                </a>
+                <a href="#" class="sidebar-link" data-target="view-prescriptions">
+                    <span class="icon">📄</span> Prescriptions
+                </a>
+                <a href="#" class="sidebar-link" data-target="view-notifications">
                     <span class="icon">🔔</span> Notifications
                 </a>
             </nav>
         </aside>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main Workspace -->
         <main class="app-main">
+            <!-- Top Header -->
             <header class="app-header">
-                <h2>Patient Dashboard</h2>
+                <div class="user-info">
+                    <span id="user-greeting">Loading...</span>
+                </div>
                 <div class="header-actions">
-                    <div class="user-info" id="user-greeting">Loading...</div>
-                    
-                    <!-- Settings / Profile Dropdown -->
                     <div class="profile-btn" onclick="document.getElementById('profileMenu').classList.toggle('active')">
-                        ⚙️
+                        👤
                     </div>
                     
                     <div class="profile-menu" id="profileMenu">
-                        <div class="profile-menu-header">
-                            Manage Account
-                        </div>
+                        <div class="profile-menu-header">Manage Account</div>
                         <div class="profile-menu-item" onclick="document.getElementById('settingsModal').classList.add('active'); document.getElementById('profileMenu').classList.remove('active');">
                             <span>⚙️</span> Settings
-                        </div>
-                        <div class="profile-menu-item" onclick="alert('Help center is under construction.'); document.getElementById('profileMenu').classList.remove('active');">
-                            <span>❓</span> Help & Support
                         </div>
                         <div class="profile-menu-item danger" id="logout-btn">
                             <span>🚪</span> Logout
@@ -80,49 +56,129 @@
                 </div>
             </header>
 
-            <div class="dashboard-grid">
-                <!-- LEFT COLUMN (Main Content) -->
-                <div class="main-column">
-                    <!-- Reminders are the most urgent, put them top left -->
-                    <div class="card">
-                        <h3>🔔 Today's Action Required</h3>
-                        <div id="reminders-content">Loading...</div>
-                    </div>
+            <div id="toast-container"></div>
 
-                    <!-- Medications List -->
-                    <div class="card">
-                        <h3>💊 My Active Medications</h3>
-                        <div id="medications-content">Loading...</div>
-                    </div>
+            <!-- VIEW: DASHBOARD (Home) -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="dashboard-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                    <!-- LEFT COLUMN -->
+                    <div class="main-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="card" style="background: linear-gradient(135deg, var(--primary-color), #003366); color: white;">
+                            <h2>Welcome back to MEDISYNC!</h2>
+                            <p style="margin-top: 0.5rem; opacity: 0.9;">Stay on top of your health journey today.</p>
+                        </div>
 
-                    <!-- Prescriptions -->
-                    <div class="card">
-                        <h3>📄 Prescription Management</h3>
-                        <form id="upload-prescription-form" style="margin-bottom: 1.5rem; display: flex; gap: 10px; align-items: flex-end;">
-                            <div class="form-group" style="margin-bottom: 0; flex: 1;">
-                                <label for="prescriptionFile">Upload New Prescription (Image/PDF)</label>
-                                <input type="file" id="prescriptionFile" accept="image/*,.pdf" required style="background: var(--bg-light);">
+                        <!-- Reminders are the most urgent -->
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">🚨 Action Required Today</h3>
+                            <div id="reminders-content">
+                                <div class="empty-state">
+                                    <div class="icon">⚙️</div>
+                                    <p>Loading your schedule...</p>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem;">Upload</button>
-                        </form>
-                        <div id="upload-alert" class="alert"></div>
-                        <div id="prescriptions-content">Loading...</div>
+                        </div>
                     </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="sidebar-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Profile Snapshot -->
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">👤 Profile Snapshot</h3>
+                            <div id="profile-content">
+                                <div class="empty-state">
+                                    <div class="icon">⚙️</div>
+                                    <p>Loading profile...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mini Adherence Widget -->
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">📈 Weekly Adherence</h3>
+                            <div style="text-align: center; padding: 1rem 0;">
+                                <h1 style="font-size: 3rem; color: #28a745; margin: 0;" id="adherence-score">--%</h1>
+                                <p style="color: var(--text-light);">Great job staying on track!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: MY MEDICINES -->
+            <section id="view-medicines" class="view-section">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="color: var(--text-dark);">💊 Active Medications</h3>
+                        <button class="btn btn-primary" onclick="alert('Feature to self-add OTC medicines coming soon.')">+ Add Medicine</button>
+                    </div>
+                    <div id="medications-content" class="table-responsive">
+                        <div class="empty-state">
+                            <div class="icon">⚙️</div>
+                            <p>Loading your medications...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: SCHEDULE -->
+            <section id="view-schedule" class="view-section">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">📅 Medication Schedule & Adherence</h3>
+                    <div class="empty-state">
+                        <div class="icon">🚧</div>
+                        <p>Detailed adherence logs are being prepared for your portal.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: PRESCRIPTIONS -->
+            <section id="view-prescriptions" class="view-section">
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">📄 Upload Prescription</h3>
+                    <form id="upload-prescription-form" style="display: flex; gap: 10px; align-items: flex-end;">
+                        <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                            <label for="prescriptionFile">Prescription Document (Image/PDF)</label>
+                            <input type="file" id="prescriptionFile" accept="image/*,.pdf" required style="background: var(--bg-light);">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; flex: 2;">
+                            <label for="prescriptionNotes">Optional Notes</label>
+                            <input type="text" id="prescriptionNotes" placeholder="e.g., Prescribed by Dr. Smith">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem;">Upload securely</button>
+                    </form>
+                    <div id="upload-alert" class="alert" style="margin-top: 10px;"></div>
                 </div>
 
-                <!-- RIGHT COLUMN (Sidebar inside main content) -->
-                <div class="sidebar-column">
-                    <!-- Profile Info -->
-                    <div class="card" style="position: sticky; top: 20px;">
-                        <h3>👤 My Profile</h3>
-                        <div id="profile-content">Loading...</div>
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">📋 My Prescriptions</h3>
+                    <div id="prescriptions-content" class="table-responsive">
+                        <div class="empty-state">
+                            <div class="icon">⚙️</div>
+                            <p>Loading your prescriptions...</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- VIEW: NOTIFICATIONS -->
+            <section id="view-notifications" class="view-section">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="color: var(--text-dark);">🔔 Notifications</h3>
+                        <button class="btn" style="background: var(--bg-light); color: var(--text-dark);">Mark all as read</button>
+                    </div>
+                    <div class="empty-state">
+                        <div class="icon">📭</div>
+                        <p>You have no new notifications.</p>
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
 
-    <!-- Settings Modal (Enterprise Framework) -->
+    <!-- Enhanced Settings Modal -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -131,7 +187,6 @@
             </div>
             
             <div class="modal-body">
-                <!-- Sidebar Tabs -->
                 <div class="settings-sidebar">
                     <div class="settings-tab active" onclick="switchTab(event, 'sec-profile')">Profile Info</div>
                     <div class="settings-tab" onclick="switchTab(event, 'sec-medical')">Medical Details</div>
@@ -139,20 +194,18 @@
                     <div class="settings-tab" onclick="switchTab(event, 'sec-security')">Security</div>
                 </div>
                 
-                <!-- Main Content Areas -->
                 <div class="settings-content">
-                    
                     <div id="sec-profile" class="settings-section active">
                         <h4>Personal Information</h4>
                         <div class="form-group">
                             <label>Full Name</label>
-                            <input type="text" value="Loading..." disabled>
+                            <input type="text" id="set-name" disabled>
                         </div>
                         <div class="form-group">
                             <label>Contact Number</label>
-                            <input type="text" placeholder="+1 (555) 000-0000">
+                            <input type="text" id="set-phone" placeholder="+1 (555) 000-0000">
                         </div>
-                        <button class="btn btn-primary">Update Profile</button>
+                        <button class="btn btn-primary" onclick="showToast('Profile updated successfully!', 'success')">Save Changes</button>
                     </div>
 
                     <div id="sec-medical" class="settings-section">
@@ -161,11 +214,7 @@
                             <label>Known Allergies</label>
                             <textarea rows="3" placeholder="List any known allergies (e.g. Penicillin, Peanuts)"></textarea>
                         </div>
-                        <div class="form-group">
-                            <label>Primary Care Physician</label>
-                            <input type="text" placeholder="Dr. Smith">
-                        </div>
-                        <button class="btn btn-primary">Save Medical Info</button>
+                        <button class="btn btn-primary" onclick="showToast('Medical info saved.', 'success')">Save Medical Info</button>
                     </div>
 
                     <div id="sec-notifications" class="settings-section">
@@ -173,10 +222,6 @@
                         <div class="form-group" style="display:flex; align-items:center; gap:10px;">
                             <input type="checkbox" id="notif-sms" checked style="width:auto;">
                             <label for="notif-sms" style="margin:0;">SMS Reminders for Medication</label>
-                        </div>
-                        <div class="form-group" style="display:flex; align-items:center; gap:10px;">
-                            <input type="checkbox" id="notif-email" checked style="width:auto;">
-                            <label for="notif-email" style="margin:0;">Email alerts when Prescriptions are ready</label>
                         </div>
                     </div>
 
@@ -186,13 +231,8 @@
                             <label>New Password</label>
                             <input type="password" placeholder="Enter new password">
                         </div>
-                        <div class="form-group">
-                            <label>Confirm Password</label>
-                            <input type="password" placeholder="Confirm new password">
-                        </div>
-                        <button class="btn btn-primary" style="background: var(--danger);">Change Password</button>
+                        <button class="btn btn-primary" style="background: var(--danger);" onclick="showToast('Password change request sent.', 'info')">Change Password</button>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -201,17 +241,35 @@
     <script src="../js/api.js?v=4"></script>
     <script src="../js/patient.js"></script>
     <script>
-        // Tab Switching Logic
+        // Tab Switching Logic for Settings
         function switchTab(event, sectionId) {
-            // Remove active from all tabs
             document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-            // Add active to clicked tab
             event.currentTarget.classList.add('active');
-            
-            // Hide all sections
             document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
-            // Show target section
             document.getElementById(sectionId).classList.add('active');
+        }
+
+        // View Routing Logic
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                
+                const targetId = e.currentTarget.getAttribute('data-target');
+                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        // Toast utility
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
         }
     </script>
 </body>
