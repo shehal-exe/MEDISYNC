@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEDISYNC - Patient Portal</title>
-    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/global.css?v=modal-scroll-20260927">
 </head>
 <body>
     <div class="app-container">
@@ -21,15 +21,27 @@
                     <span class="icon">💊</span> My Medicines
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-schedule">
-                    <span class="icon">📅</span> Schedule
+                    <span class="icon">📅</span> Schedule & Food Timing
+                </a>
+                <a href="#" class="sidebar-link" data-target="view-interactions">
+                    <span class="icon">🔬</span> Drug Safety & Conflicts
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-prescriptions">
-                    <span class="icon">📄</span> Prescriptions
+                    <span class="icon">📄</span> Prescriptions & Refills
+                </a>
+                <a href="#" class="sidebar-link" data-target="view-medical-id">
+                    <span class="icon">🪪</span> Emergency Health Card
                 </a>
                 <a href="#" class="sidebar-link" data-target="view-notifications">
                     <span class="icon">🔔</span> Notifications
                 </a>
             </nav>
+            <div class="sidebar-footer">
+                <a href="../index.html" class="portal-exit-link" id="back-home-btn">
+                    <span class="icon">←</span>
+                    <span>Portal Login</span>
+                </a>
+            </div>
         </aside>
 
         <!-- Main Workspace -->
@@ -63,14 +75,74 @@
                 <div class="dashboard-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
                     <!-- LEFT COLUMN -->
                     <div class="main-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        <div class="card" style="background: linear-gradient(135deg, var(--primary-color), #003366); color: white;">
-                            <h2>Welcome back to MEDISYNC!</h2>
-                            <p style="margin-top: 0.5rem; opacity: 0.9;">Stay on top of your health journey today.</p>
+                        <div class="card dashboard-hero">
+                            <div>
+                                <div class="dashboard-kicker">Patient Care Command Center</div>
+                                <h2>Welcome back. Your care plan is synchronized.</h2>
+                                <p>Track today’s doses, monitor adherence, upload prescriptions, and request refills from one secure MEDISYNC workspace.</p>
+                                <div class="dashboard-hero-badges">
+                                    <span class="hero-chip">12-day adherence streak</span>
+                                    <span class="hero-chip">Blood group B+</span>
+                                    <span class="hero-chip">Prescription verified</span>
+                                </div>
+                            </div>
+                            <div class="hero-next-dose">
+                                <div class="label">Next priority</div>
+                                <strong>Lisinopril 10mg</strong>
+                                <span>Take after breakfast with water</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-grid">
+                            <div class="metric-card">
+                                <div class="metric-label">Adherence</div>
+                                <div class="metric-value" id="adherence-score">--%</div>
+                                <div class="metric-note">Weekly medication completion</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Active medicines</div>
+                                <div class="metric-value">2</div>
+                                <div class="metric-note">Verified ongoing treatments</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Next refill</div>
+                                <div class="metric-value">6d</div>
+                                <div class="metric-note">Lisinopril stock reminder</div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="section-toolbar">
+                                <div>
+                                    <h3>Quick Actions</h3>
+                                    <p>Jump directly into common healthcare tasks.</p>
+                                </div>
+                            </div>
+                            <div class="quick-actions-grid">
+                                <button class="quick-action" onclick="document.querySelector('[data-target=&quot;view-prescriptions&quot;]').click()">
+                                    <strong>Upload prescription</strong>
+                                    <span>Send a document for pharmacist verification</span>
+                                </button>
+                                <button class="quick-action" onclick="document.querySelector('[data-target=&quot;view-interactions&quot;]').click()">
+                                    <strong>Scan interaction</strong>
+                                    <span>Check medication safety before taking</span>
+                                </button>
+                                <button class="quick-action" onclick="openRefillModal()">
+                                    <strong>Request refill</strong>
+                                    <span>Estimate price and queue a pharmacy refill</span>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Reminders are the most urgent -->
                         <div class="card">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">🚨 Action Required Today</h3>
+                            <div class="section-toolbar">
+                                <div>
+                                    <h3>Action Required Today</h3>
+                                    <p>Time, dosage, and food guidance for your next dose.</p>
+                                </div>
+                                <span class="clinical-badge badge-moderate-risk">Time & Food Guidelines</span>
+                            </div>
                             <div id="reminders-content">
                                 <div class="empty-state">
                                     <div class="icon">⚙️</div>
@@ -84,21 +156,45 @@
                     <div class="sidebar-column" style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <!-- Profile Snapshot -->
                         <div class="card">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">👤 Profile Snapshot</h3>
+                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">👤 Medical Profile</h3>
                             <div id="profile-content">
                                 <div class="empty-state">
                                     <div class="icon">⚙️</div>
                                     <p>Loading profile...</p>
                                 </div>
                             </div>
+                            <div class="vitals-grid">
+                                <div class="vital-item">
+                                    <div class="vital-label">Allergies</div>
+                                    <div class="vital-value" style="font-size: 13px; color: var(--danger);">Penicillin</div>
+                                </div>
+                                <div class="vital-item">
+                                    <div class="vital-label">Next Refill</div>
+                                    <div class="vital-value" style="font-size: 13px; color: var(--primary-color);">In 6 Days</div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Mini Adherence Widget -->
                         <div class="card">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-dark);">📈 Weekly Adherence</h3>
-                            <div style="text-align: center; padding: 1rem 0;">
-                                <h1 style="font-size: 3rem; color: #28a745; margin: 0;" id="adherence-score">--%</h1>
-                                <p style="color: var(--text-light);">Great job staying on track!</p>
+                            <h3 style="margin-bottom: 0.5rem; color: var(--text-dark);">📈 Care Insights</h3>
+                            <div class="vitals-grid">
+                                <div class="vital-item">
+                                    <div class="vital-label">Dose Pattern</div>
+                                    <div class="vital-value" style="font-size: 13px;">Mostly on time</div>
+                                </div>
+                                <div class="vital-item">
+                                    <div class="vital-label">Risk Flag</div>
+                                    <div class="vital-value" style="font-size: 13px; color: var(--success);">Stable</div>
+                                </div>
+                                <div class="vital-item">
+                                    <div class="vital-label">Prescription</div>
+                                    <div class="vital-value" style="font-size: 13px; color: var(--primary-color);">Verified</div>
+                                </div>
+                                <div class="vital-item">
+                                    <div class="vital-label">Refill</div>
+                                    <div class="vital-value" style="font-size: 13px; color: var(--warning);">Soon</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -109,8 +205,11 @@
             <section id="view-medicines" class="view-section">
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h3 style="color: var(--text-dark);">💊 Active Medications</h3>
-                        <button class="btn btn-primary" onclick="alert('Feature to self-add OTC medicines coming soon.')">+ Add Medicine</button>
+                        <div>
+                            <h3 style="color: var(--text-dark); margin: 0;">💊 Active Medications & Food Guidelines</h3>
+                            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 2px;">Your active clinical prescriptions and self-monitored medicines</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddMedicineModal()">+ Add Medication</button>
                     </div>
                     <div id="medications-content" class="table-responsive">
                         <div class="empty-state">
@@ -124,39 +223,175 @@
             <!-- VIEW: SCHEDULE -->
             <section id="view-schedule" class="view-section">
                 <div class="card">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">📅 Medication Schedule & Adherence</h3>
-                    <div class="empty-state">
-                        <div class="icon">🚧</div>
-                        <p>Detailed adherence logs are being prepared for your portal.</p>
+                    <h3 style="margin-bottom: 0.5rem; color: var(--text-dark);">📅 Medication Schedule & Daily Log</h3>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 1.5rem;">Comprehensive log of taken and skipped medications with adherence verification</p>
+                    <div id="schedule-history-content">
+                        <div class="empty-state">
+                            <div class="icon">📅</div>
+                            <p>Loading adherence logs...</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- VIEW: PRESCRIPTIONS -->
+            <!-- VIEW: DRUG INTERACTIONS & CLINICAL SAFETY -->
+            <section id="view-interactions" class="view-section">
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <h3 style="margin: 0; color: var(--text-dark);">🔬 Clinical Drug Interaction & Safety Scanner</h3>
+                            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 3px;">
+                                Check potential adverse drug-drug interactions and allergy contraindications before starting any new medication.
+                            </p>
+                        </div>
+                        <span class="clinical-badge badge-safe">Clinical Intelligence v2.0</span>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; background: var(--bg-secondary); padding: 16px; border-radius: 10px; margin-bottom: 1.5rem;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px;">Primary Medication</label>
+                            <select id="interaction-med-1" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-default);">
+                                <option value="Lisinopril 10mg">Lisinopril 10mg (ACE Inhibitor)</option>
+                                <option value="Metformin 500mg">Metformin 500mg (Anti-diabetic)</option>
+                                <option value="Amoxicillin 250mg">Amoxicillin 250mg (Penicillin Antibiotic)</option>
+                                <option value="Paracetamol 500mg">Paracetamol 500mg (Analgesic)</option>
+                                <option value="Ibuprofen 400mg">Ibuprofen 400mg (NSAID)</option>
+                                <option value="Atorvastatin 20mg">Atorvastatin 20mg (Statin)</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px;">Second Medication / Substance</label>
+                            <select id="interaction-med-2" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-default);">
+                                <option value="Potassium Supplements">Potassium Supplements (Electrolytes)</option>
+                                <option value="Ibuprofen 400mg">Ibuprofen 400mg (NSAID)</option>
+                                <option value="Alcohol / Contrast Dye">Alcohol / Contrast Dye</option>
+                                <option value="Methotrexate">Methotrexate</option>
+                                <option value="Warfarin / Blood Thinners">Warfarin / Blood Thinners</option>
+                                <option value="Aspirin 75mg">Aspirin 75mg (Blood thinner)</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: flex-end;">
+                            <button class="btn btn-primary" onclick="runInteractionCheck()" style="padding: 9px 20px;">Scan for Conflicts</button>
+                        </div>
+                    </div>
+
+                    <div id="interaction-result-box" style="display: none; padding: 18px; border-radius: 10px; border: 1px solid #ddd;"></div>
+                </div>
+
+                <!-- Active Medications Safety Overview -->
+                <div class="card">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-dark);">🛡️ Current Medication Cross-Check</h4>
+                    <div style="padding: 16px; background: var(--bg-secondary); border-radius: 8px; border-left: 4px solid var(--success);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>Lisinopril 10mg + Metformin 500mg</strong>
+                                <p style="font-size: 13px; color: var(--text-secondary); margin-top: 2px;">
+                                    No direct clinical contraindications detected. Safe for concurrent administration with normal hydration.
+                                </p>
+                            </div>
+                            <span class="clinical-badge badge-safe">No Conflict</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: PRESCRIPTIONS & REFILLS -->
             <section id="view-prescriptions" class="view-section">
                 <div class="card" style="margin-bottom: 1.5rem;">
-                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">📄 Upload Prescription</h3>
-                    <form id="upload-prescription-form" style="display: flex; gap: 10px; align-items: flex-end;">
-                        <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="margin: 0; color: var(--text-dark);">📄 Upload Prescription</h3>
+                        <button class="btn btn-primary" onclick="openRefillModal()" style="background: linear-gradient(135deg, var(--secondary-color), #1A54C7);">
+                            🛒 Request Pharmacy Refill (₹)
+                        </button>
+                    </div>
+                    <form id="upload-prescription-form" style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                        <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 200px;">
                             <label for="prescriptionFile">Prescription Document (Image/PDF)</label>
                             <input type="file" id="prescriptionFile" accept="image/*,.pdf" required style="background: var(--bg-light);">
                         </div>
-                        <div class="form-group" style="margin-bottom: 0; flex: 2;">
-                            <label for="prescriptionNotes">Optional Notes</label>
-                            <input type="text" id="prescriptionNotes" placeholder="e.g., Prescribed by Dr. Smith">
+                        <div class="form-group" style="margin-bottom: 0; flex: 2; min-width: 250px;">
+                            <label for="prescriptionNotes">Clinical Notes / Doctor Name</label>
+                            <input type="text" id="prescriptionNotes" placeholder="e.g., Prescribed by Dr. Ramesh Gupta, KMC Hospital">
                         </div>
-                        <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem;">Upload securely</button>
+                        <button type="submit" class="btn btn-primary" style="padding: 0.8rem 1.5rem;">Upload Document</button>
                     </form>
                     <div id="upload-alert" class="alert" style="margin-top: 10px;"></div>
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">📋 My Prescriptions</h3>
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dark);">📋 Verified Prescriptions & Refill Orders</h3>
                     <div id="prescriptions-content" class="table-responsive">
                         <div class="empty-state">
                             <div class="icon">⚙️</div>
                             <p>Loading your prescriptions...</p>
                         </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <div class="section-toolbar">
+                        <div>
+                            <h3>🧾 My Refill Requests</h3>
+                            <p>Track requests sent to the pharmacist and see approval progress.</p>
+                        </div>
+                        <span class="clinical-badge badge-safe">Pharmacy Queue</span>
+                    </div>
+                    <div id="patient-refill-requests-content" class="table-responsive">
+                        <div class="empty-state">
+                            <div class="icon">⚙️</div>
+                            <p>Loading refill requests...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: EMERGENCY HEALTH CARD -->
+            <section id="view-medical-id" class="view-section">
+                <div class="card" style="max-width: 800px; margin: 0 auto; border: 2px solid var(--border-default); border-radius: 16px; padding: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-divider); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 2.5rem;">🪪</span>
+                            <div>
+                                <h2 style="margin: 0; color: var(--text-primary);">Emergency Health ID Card</h2>
+                                <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">MEDISYNC Digital Medical Identity & Clinical Safety Record</p>
+                            </div>
+                        </div>
+                        <button class="btn" style="background: var(--bg-secondary); border: 1px solid var(--border-strong);" onclick="window.print()">
+                            🖨️ Print ID
+                        </button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem;">
+                        <div class="vital-item">
+                            <div class="vital-label">Patient Name</div>
+                            <div class="vital-value" id="med-id-name">John Doe</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-label">Blood Group</div>
+                            <div class="vital-value" style="color: var(--danger);">B Positive (B+)</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-label">Date of Birth</div>
+                            <div class="vital-value" id="med-id-dob">1985-08-20</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-label">Known Allergies</div>
+                            <div class="vital-value" style="color: var(--danger); font-size: 13px;">Penicillin (Severe), Sulfa</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-label">Primary Physician</div>
+                            <div class="vital-value" style="font-size: 13px;">Dr. Ramesh Gupta, MD (Cardiology)</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">+91 98450 12345</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-label">Emergency Next-of-Kin</div>
+                            <div class="vital-value" style="font-size: 13px;">Anjali Menon (Spouse)</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">+91 94470 67890</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; padding: 12px 16px; background: var(--info-soft); border-radius: 8px; border: 1px solid rgba(40,104,178,0.2); font-size: 12px; color: var(--info);">
+                        ℹ️ <strong>Emergency Guidance:</strong> In case of an emergency, present this digital card to first responders or emergency room personnel to avoid antibiotic/drug allergy complications.
                     </div>
                 </div>
             </section>
@@ -165,7 +400,7 @@
             <section id="view-notifications" class="view-section">
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h3 style="color: var(--text-dark);">🔔 Notifications</h3>
+                        <h3 style="color: var(--text-dark);">🔔 Clinical Notifications</h3>
                         <button class="btn" style="background: var(--bg-light); color: var(--text-dark);">Mark all as read</button>
                     </div>
                     <div class="empty-state">
@@ -176,6 +411,108 @@
             </section>
 
         </main>
+    </div>
+
+    <!-- MODAL: ADD MEDICATION -->
+    <div class="modal-overlay" id="addMedicineModal">
+        <div class="modal-content" style="max-width: 500px; padding: 24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+                <h3 style="margin:0;">Add Active Medication</h3>
+                <span class="modal-close" onclick="closeAddMedicineModal()" style="font-size:24px; cursor:pointer;">&times;</span>
+            </div>
+            <form id="add-medicine-form">
+                <div class="form-group">
+                    <label>Select Medication (from Pharmacy Catalog)</label>
+                    <select id="modal-medicine-id" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;">
+                        <option value="1">Paracetamol 500mg (Cipla) - ₹35.00</option>
+                        <option value="2">Amoxicillin 250mg (Sun Pharma) - ₹120.00</option>
+                        <option value="3" selected>Lisinopril 10mg (Torrent) - ₹85.00</option>
+                        <option value="4">Metformin 500mg (USV) - ₹45.00</option>
+                        <option value="5">Ibuprofen 400mg (Abbott) - ₹60.00</option>
+                        <option value="6">Atorvastatin 20mg (Lupin) - ₹165.00</option>
+                        <option value="7">Levothyroxine 50mcg (GSK) - ₹135.00</option>
+                        <option value="8">Omeprazole 20mg (Dr. Reddy) - ₹90.00</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Dosage</label>
+                    <input type="text" id="modal-dosage" required value="1 Tablet" placeholder="e.g. 1 Tablet or 5ml">
+                </div>
+                <div class="form-group">
+                    <label>Food & Timing Instruction</label>
+                    <select id="modal-instructions" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;">
+                        <option value="Take after food (within 30 mins) with a glass of water">🍽️ After Food (Within 30 mins)</option>
+                        <option value="Take on empty stomach (1 hour before meal)">⏳ Before Food (Empty Stomach)</option>
+                        <option value="Take SOS only when experiencing pain or symptoms">🚨 SOS (As Needed)</option>
+                        <option value="Take with full glass of water at bedtime">🌙 Night / Bedtime</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:12px;">Save Medication</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: PHARMACY REFILL REQUEST (IN INR ₹) -->
+    <div class="modal-overlay" id="refillModal">
+        <div class="modal-content refill-modal-content" style="max-width: 520px; padding: 24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+                <h3 style="margin:0;">Request Pharmacy Refill (₹)</h3>
+                <span class="modal-close" onclick="closeRefillModal()" style="font-size:24px; cursor:pointer;">&times;</span>
+            </div>
+            <form id="refill-form" onsubmit="handleRefillOrder(event)">
+                <div class="form-group">
+                    <label>Send Request To</label>
+                    <select id="refill-pharmacist-select" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;">
+                        <option value="">Loading pharmacy destinations...</option>
+                    </select>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px;">
+                        Choose the pharmacist/pharmacy that should receive this refill request. The code in brackets is unique, so similar names are not confused.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Select Medication to Refill</label>
+                    <select id="refill-med-select" onchange="updateRefillPrice()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;">
+                        <option value="85" data-name="Lisinopril 10mg">Lisinopril 10mg (Torrent) - ₹85.00/strip</option>
+                        <option value="45" data-name="Metformin 500mg">Metformin 500mg (USV) - ₹45.00/strip</option>
+                        <option value="120" data-name="Amoxicillin 250mg">Amoxicillin 250mg (Sun Pharma) - ₹120.00/strip</option>
+                        <option value="165" data-name="Atorvastatin 20mg">Atorvastatin 20mg (Lupin) - ₹165.00/strip</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity (Packs / Strips)</label>
+                    <input type="number" id="refill-qty" min="1" max="10" value="3" oninput="updateRefillPrice()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;">
+                </div>
+                <div class="form-group">
+                    <label>Fulfillment Method</label>
+                    <select id="refill-method" onchange="updateRefillPrice()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;">
+                        <option value="Pickup">🏪 Pharmacy Counter Pickup (Ready in 2 hrs)</option>
+                        <option value="Delivery">🚚 Express Home Delivery (+₹40)</option>
+                    </select>
+                </div>
+
+                <!-- Price Breakdown in INR -->
+                <div class="gst-breakdown">
+                    <div class="gst-row">
+                        <span>Medicines Total:</span>
+                        <span id="refill-base-price">₹255.00</span>
+                    </div>
+                    <div class="gst-row">
+                        <span>GST (12% Included):</span>
+                        <span id="refill-gst">₹27.32</span>
+                    </div>
+                    <div class="gst-row">
+                        <span>Delivery Fee:</span>
+                        <span id="refill-delivery-fee">₹0.00</span>
+                    </div>
+                    <div class="gst-total">
+                        <span>Estimated Total:</span>
+                        <span id="refill-total-price">₹255.00</span>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-refill-btn" class="btn btn-primary" style="width:100%; margin-top:8px;">Submit Refill Request</button>
+            </form>
+        </div>
     </div>
 
     <!-- Enhanced Settings Modal -->
@@ -239,7 +576,7 @@
     </div>
 
     <script src="../js/api.js?v=4"></script>
-    <script src="../js/patient.js"></script>
+    <script src="../js/patient.js?v=targeted-refills-20260927"></script>
     <script>
         // Tab Switching Logic for Settings
         function switchTab(event, sectionId) {
@@ -247,29 +584,6 @@
             event.currentTarget.classList.add('active');
             document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
-        }
-
-        // View Routing Logic
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-                e.currentTarget.classList.add('active');
-                
-                const targetId = e.currentTarget.getAttribute('data-target');
-                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-                document.getElementById(targetId).classList.add('active');
-            });
-        });
-
-        // Toast utility
-        window.showToast = function(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `<span>${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
         }
     </script>
 </body>

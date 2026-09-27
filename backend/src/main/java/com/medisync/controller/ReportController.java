@@ -4,6 +4,7 @@ import com.medisync.dto.ApiResponse;
 import com.medisync.dto.DashboardReportResponse;
 import com.medisync.service.ReportService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,8 +20,8 @@ public class ReportController {
     }
 
     @GetMapping("/dashboard")
-    public ResponseEntity<ApiResponse<DashboardReportResponse>> getDashboard() {
-        DashboardReportResponse report = reportService.getDashboardReport();
+    public ResponseEntity<ApiResponse<DashboardReportResponse>> getDashboard(Authentication authentication) {
+        DashboardReportResponse report = reportService.getDashboardReport(authentication.getName());
         return ResponseEntity.ok(new ApiResponse<>(true, "Dashboard report retrieved successfully", report));
     }
 }

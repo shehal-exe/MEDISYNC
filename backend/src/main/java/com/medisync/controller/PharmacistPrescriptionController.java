@@ -23,15 +23,17 @@ public class PharmacistPrescriptionController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PrescriptionResponse>>> getAll(@RequestParam(required = false) String status) {
-        List<PrescriptionResponse> list = pharmacistPrescriptionService.getAllPrescriptions(status);
+    public ResponseEntity<ApiResponse<List<PrescriptionResponse>>> getAll(
+            @RequestParam(required = false) String status,
+            Authentication authentication) {
+        List<PrescriptionResponse> list = pharmacistPrescriptionService.getAllPrescriptions(authentication.getName(), status);
         return ResponseEntity.ok(new ApiResponse<>(true, "Prescriptions retrieved successfully", list));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<PrescriptionResponse>> getOne(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<PrescriptionResponse>> getOne(@PathVariable Long id, Authentication authentication) {
         try {
-            PrescriptionResponse res = pharmacistPrescriptionService.getPrescription(id);
+            PrescriptionResponse res = pharmacistPrescriptionService.getPrescription(authentication.getName(), id);
             return ResponseEntity.ok(new ApiResponse<>(true, "Prescription retrieved successfully", res));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, e.getMessage(), "NOT_FOUND"));

@@ -46,6 +46,14 @@ public class UserDao {
         return users.isEmpty() ? null : users.get(0);
     }
 
+    public List<Long> findUserIdsByRole(String roleName) {
+        return jdbcTemplate.query(
+                "SELECT user_id FROM Role WHERE role_name = ?",
+                (rs, rowNum) -> rs.getLong("user_id"),
+                roleName
+        );
+    }
+
     public Long save(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {

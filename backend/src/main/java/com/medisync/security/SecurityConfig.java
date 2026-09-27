@@ -84,7 +84,9 @@ public class SecurityConfig {
                 .requestMatchers(
                         HttpMethod.POST,
                         "/api/v1/auth/register",
-                        "/api/v1/auth/register/"
+                        "/api/v1/auth/register/",
+                        "/api/v1/auth/register/pharmacist",
+                        "/api/v1/auth/register/pharmacist/"
                 ).permitAll()
 
                 .requestMatchers(
@@ -152,10 +154,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Allow the frontend local server and file protocol
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000", "null"));
+        // Allow the frontend local server across common development ports (3000, 5500, 8000, 8080) and file protocol
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+                "http://[::1]:*",
+                "null"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With"));
         configuration.setAllowCredentials(true);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

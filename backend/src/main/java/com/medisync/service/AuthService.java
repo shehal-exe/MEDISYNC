@@ -2,6 +2,7 @@ package com.medisync.service;
 
 import com.medisync.dao.PasswordResetTokenDao;
 import com.medisync.dao.PatientProfileDao;
+import com.medisync.dao.PharmacistProfileDao;
 import com.medisync.dao.RoleDao;
 import com.medisync.dao.UserDao;
 import com.medisync.dto.*;
@@ -22,14 +23,17 @@ public class AuthService {
     private final UserDao userDao;
     private final RoleDao roleDao;
     private final PatientProfileDao patientProfileDao;
+    private final PharmacistProfileDao pharmacistProfileDao;
     private final PasswordResetTokenDao passwordResetTokenDao;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserDao userDao, RoleDao roleDao, PatientProfileDao patientProfileDao, 
+    public AuthService(UserDao userDao, RoleDao roleDao, PatientProfileDao patientProfileDao,
+                       PharmacistProfileDao pharmacistProfileDao,
                        PasswordResetTokenDao passwordResetTokenDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.roleDao = roleDao;
         this.patientProfileDao = patientProfileDao;
+        this.pharmacistProfileDao = pharmacistProfileDao;
         this.passwordResetTokenDao = passwordResetTokenDao;
         this.passwordEncoder = passwordEncoder;
     }
@@ -50,6 +54,36 @@ public class AuthService {
                 request.getContactNumber(), request.getDateOfBirth());
 
         return new AuthResponse(userId, user.getEmail(), "PATIENT");
+    }
+
+    @Transactional
+    public AuthResponse registerPharmacist(PharmacistRegisterRequest request) {
+        if (userDao.findByEmail(request.getEmail()) != null) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+        if (pharmacistProfileDao.isDisplayNameTaken(0L, request.getFirstName(), request.getLastName())) {
+            throw new IllegalArgumentException("That pharmacist display name is already taken. Add an initial, branch, or qualifier so patients can identify the right pharmacy.");
+        }
+        if (pharmacistProfileDao.isLicenseNumberTaken(request.getLicenseNumber())) {
+            throw new IllegalArgumentException("This license number is already registered");
+        }
+
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        Long userId = userDao.save(user);
+
+        roleDao.addRole(userId, "PHARMACIST");
+        String publicHandle = createUniquePublicHandle(request.getFirstName(), request.getLastName(), request.getLicenseNumber());
+        pharmacistProfileDao.createProfile(
+                userId,
+                request.getFirstName(),
+                request.getLastName(),
+                request.getLicenseNumber(),
+                publicHandle
+        );
+
+        return new AuthResponse(userId, user.getEmail(), "PHARMACIST");
     }
 
     public AuthResponse getUserInfo(String email) {
@@ -96,5 +130,28 @@ public class AuthService {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("SHA-256 algorithm not found", e);
         }
+    }
+
+    private String createUniquePublicHandle(String firstName, String lastName, String licenseNumber) {
+        String base = slugify(firstName + "-" + lastName);
+        String suffix = slugify(licenseNumber).replace("-", "");
+        if (suffix.length() > 6) {
+            suffix = suffix.substring(Math.max(0, suffix.length() - 6));
+        }
+
+        String candidate = base + "-ph" + (suffix.isBlank() ? "" : "-" + suffix);
+        int counter = 2;
+        while (pharmacistProfileDao.isPublicHandleTaken(candidate)) {
+            candidate = base + "-ph" + (suffix.isBlank() ? "" : "-" + suffix) + "-" + counter;
+            counter++;
+        }
+        return candidate;
+    }
+
+    private String slugify(String value) {
+        String slug = value == null ? "" : value.toLowerCase()
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("^-|-$", "");
+        return slug.isBlank() ? "pharmacy" : slug;
     }
 }

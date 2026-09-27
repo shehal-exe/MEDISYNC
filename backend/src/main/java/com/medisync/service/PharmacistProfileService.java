@@ -7,6 +7,8 @@ import com.medisync.dto.UpdatePharmacistProfileRequest;
 import com.medisync.model.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PharmacistProfileService {
 
@@ -35,8 +37,15 @@ public class PharmacistProfileService {
         return profile;
     }
 
+    public List<PharmacistProfileResponse> getDirectory() {
+        return pharmacistProfileDao.findAllProfiles();
+    }
+
     public PharmacistProfileResponse updateMyProfile(String email, UpdatePharmacistProfileRequest request) {
         Long userId = getUserIdByEmail(email);
+        if (pharmacistProfileDao.isDisplayNameTaken(userId, request.getFirstName(), request.getLastName())) {
+            throw new IllegalArgumentException("That pharmacist display name is already taken. Add an initial, branch, or qualifier so patients can identify the right pharmacy.");
+        }
         boolean updated = pharmacistProfileDao.updateProfile(userId, request);
         if (!updated) {
             throw new IllegalArgumentException("Failed to update profile or profile not found");

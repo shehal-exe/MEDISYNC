@@ -31,7 +31,7 @@ public class PharmacistSetupTest {
         jdbcTemplate.update("INSERT INTO Role (user_id, role_name) VALUES (?, 'PHARMACIST')", userId);
         
         // Insert Pharmacist Profile
-        jdbcTemplate.update("INSERT INTO PharmacistProfile (user_id, first_name, last_name, license_number) VALUES (?, 'Dr. Admin', 'Smith', 'PH-99999')", userId);
+        jdbcTemplate.update("INSERT INTO PharmacistProfile (user_id, first_name, last_name, license_number, public_handle) VALUES (?, 'Dr. Admin', 'Smith', 'PH-99999', 'admin-smith-ph1')", userId);
         
         System.out.println("PHARMACIST CREATED! Email: " + email + ", Password: " + password);
     }

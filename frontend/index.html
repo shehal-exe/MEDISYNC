@@ -3,327 +3,1042 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEDISYNC - Your Health, Synchronized</title>
-    <link rel="stylesheet" href="css/global.css">
+    <title>MEDISYNC - Intelligent Care & Modern Pharmacy Management</title>
+    <link rel="stylesheet" href="css/global.css?v=modal-scroll-20260927">
     <style>
-        /* Hero Section */
+        /* Modern Design System Tokens */
+        :root {
+            --brand-primary: #167C80;
+            --brand-primary-dark: #105B61;
+            --brand-secondary: #2F6FED;
+            --brand-accent: #F2B84B;
+            --brand-dark: #0F2D34;
+            --brand-surface: #FFFFFF;
+            --brand-bg: #F5F8FA;
+        }
+
+        /* Sleek Sticky Navbar */
+        .landing-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(8, 28, 34, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+        }
+
+        .nav-logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-logo-badge {
+            font-size: 0.65rem;
+            background: rgba(22, 124, 128, 0.4);
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            color: #5EEAD4;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-item {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            color: #5EEAD4;
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--brand-primary), #1EA1A6);
+            color: white !important;
+            padding: 0.55rem 1.4rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 14px rgba(22, 124, 128, 0.4);
+            transition: all 0.25s ease;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 124, 128, 0.5);
+        }
+
+        /* High-Impact Hero Section */
         .hero-section {
-            min-height: 100vh;
+            min-height: 92vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            text-align: center;
-            padding: 0 20px;
+            text-align: left;
+            padding: 5rem 1.5rem 4rem 1.5rem;
             position: relative;
-            background: linear-gradient(rgba(0, 86, 179, 0.65), rgba(0, 168, 204, 0.8)), url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2000&auto=format&fit=crop') no-repeat center center;
-            background-size: cover;
+            background:
+                linear-gradient(90deg, rgba(4, 18, 24, 0.97) 0%, rgba(6, 25, 31, 0.9) 48%, rgba(8, 35, 42, 0.42) 100%),
+                url('https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=2200&auto=format&fit=crop') center right / cover no-repeat;
             color: white;
+            overflow: hidden;
+        }
+
+        /* Subtle Background Grid Texture */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 46px 46px;
+            opacity: 0.18;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            width: min(1180px, 100%);
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 1.1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #5EEAD4;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero-badge .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2DD4BF;
+            box-shadow: 0 0 10px #2DD4BF;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
         }
 
         .hero-title {
-            font-size: 5rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 0.5rem;
-            letter-spacing: 3px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            animation: fadeInDown 1s ease;
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            font-weight: 850;
+            line-height: 1.1;
+            letter-spacing: 0;
+            margin-bottom: 1.5rem;
+            max-width: 760px;
+            color: #FFFFFF;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease;
         }
 
-        .hero-quote {
-            font-size: 1.5rem;
-            color: rgba(255,255,255,0.9);
-            margin-bottom: 2.5rem;
-            font-style: italic;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        .hero-highlight {
+            background: linear-gradient(135deg, #5EEAD4 0%, #60A5FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.28));
+        }
+
+        .hero-desc {
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: rgba(255, 255, 255, 0.88);
+            max-width: 680px;
+            line-height: 1.6;
+            margin-bottom: 2.75rem;
+            font-weight: 400;
             animation: fadeInUp 1s ease;
-            max-width: 600px;
         }
 
-        .scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            animation: bounce 2s infinite;
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            justify-content: flex-start;
+            margin-bottom: 3.5rem;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .btn-hero-primary {
+            background: linear-gradient(135deg, var(--brand-primary), #1EA1A6);
             color: white;
-            font-size: 2.5rem;
-            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1rem 2.5rem;
+            border-radius: 9999px;
             text-decoration: none;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 24px rgba(22, 124, 128, 0.45);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(22, 124, 128, 0.6);
+            color: white;
         }
 
-        /* Content Sections */
-        .section {
-            padding: 5rem 20px;
-            background: var(--white);
+        .btn-hero-secondary {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1rem 2.25rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.3s ease;
         }
 
-        .section-alt {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(5px);
+        .btn-hero-secondary:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        /* Metric Highlights Strip */
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(150px, 1fr));
+            gap: 0.85rem;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 16px;
+            padding: 0.9rem 1rem;
+            backdrop-filter: blur(12px);
+        }
+
+        .stat-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Features Section */
+        .section-features {
+            padding: 6rem 1.5rem;
+            background:
+                radial-gradient(circle at 18% 12%, rgba(47, 111, 237, 0.1), transparent 28%),
+                radial-gradient(circle at 82% 0%, rgba(242, 184, 75, 0.13), transparent 26%),
+                linear-gradient(180deg, #F7FAFB 0%, #EEF5F4 100%);
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 750px;
+            margin: 0 auto 4rem auto;
+        }
+
+        .section-badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--brand-primary);
+            background: var(--primary-soft);
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
         }
 
         .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 3rem;
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
-            max-width: 1200px;
+            max-width: 1180px;
             margin: 0 auto;
         }
 
         .feature-card {
-            background: var(--white);
+            background: #FFFFFF;
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
             padding: 2.5rem 2rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            transition: transform 0.3s;
-            border-bottom: 4px solid var(--primary-color);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            box-shadow: 0 4px 20px rgba(24, 50, 58, 0.04);
+            display: flex;
+            flex-direction: column;
+            text-align: left;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -10px rgba(22, 124, 128, 0.15);
+            border-color: rgba(22, 124, 128, 0.4);
         }
 
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .feature-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--brand-primary);
+            background: var(--primary-soft);
+            padding: 2px 10px;
+            border-radius: 9999px;
+            width: fit-content;
+            margin-bottom: 1.25rem;
         }
 
-        .about-text {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-            font-size: 1.2rem;
-            line-height: 1.8;
-            color: var(--text-dark);
-        }
-
-        /* Glassmorphism Card (Login) */
-        .login-wrapper {
-            display: flex;
-            justify-content: center;
-            padding: 4rem 20px;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 3rem;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: all 0.5s ease;
-        }
-
-        .glass-card.pharmacist-mode {
-            background: rgba(240, 253, 244, 0.95);
-            border: 2px solid #28a745;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 1rem;
-            font-size: 1.1rem;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-bottom: 1rem;
-        }
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,86,179,0.3);
-        }
-
-        .pharmacist-mode .btn-login {
-            background: #28a745;
-        }
-        .pharmacist-mode .btn-login:hover {
-            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
-        }
-
-        /* Bottom Right Pharmacist Button */
-        .floating-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--white);
-            color: var(--text-dark);
-            padding: 10px 20px;
-            border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            cursor: pointer;
+        .feature-icon-wrapper {
+            width: 58px;
+            height: 58px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary-soft), #EAF0FF);
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            border: 2px solid #ddd;
-            z-index: 1000;
+            justify-content: center;
+            font-size: 1.85rem;
+            margin-bottom: 1.25rem;
         }
-        .floating-btn:hover {
-            transform: scale(1.05);
-            border-color: #28a745;
-            color: #28a745;
+
+        .feature-card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        /* Unified Portal / Login Section */
+        .section-portal {
+            padding: 6rem 1.5rem;
+            background:
+                linear-gradient(135deg, rgba(7, 31, 37, 0.94), rgba(18, 59, 67, 0.92)),
+                url('https://images.unsplash.com/photo-1587854692152-cbe660dbde88?q=80&w=1800&auto=format&fit=crop') center / cover no-repeat;
+            border-top: 1px solid var(--border-divider);
+        }
+
+        .section-portal .section-title,
+        .section-portal .section-desc {
+            color: #FFFFFF;
+        }
+
+        .section-portal .section-desc {
+            color: rgba(255, 255, 255, 0.78);
+        }
+
+        .section-portal .section-badge {
+            background: rgba(255, 255, 255, 0.12);
+            color: #5EEAD4;
+            border: 1px solid rgba(94, 234, 212, 0.28);
+        }
+
+        .portal-card-container {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(380px, 500px);
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+
+        .portal-proof-panel {
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 18px;
+            padding: 2rem;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.07));
+            backdrop-filter: blur(16px);
+            color: white;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .portal-proof-panel::after {
+            content: '';
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            right: -70px;
+            bottom: -70px;
+            background: radial-gradient(circle, rgba(242, 184, 75, 0.28), transparent 66%);
+        }
+
+        .portal-proof-title {
+            font-size: 2rem;
+            line-height: 1.15;
+            max-width: 500px;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .portal-proof-text {
+            max-width: 540px;
+            color: rgba(255, 255, 255, 0.78);
+            line-height: 1.65;
+        }
+
+        .portal-proof-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .proof-metric {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 14px;
+            padding: 1rem;
+        }
+
+        .proof-metric strong {
+            display: block;
+            font-size: 1.45rem;
+            color: white;
+        }
+
+        .proof-metric span {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.74);
+        }
+
+        .portal-login-pane {
+            min-width: 0;
+        }
+
+        /* Segmented Portal Role Toggle */
+        .portal-switcher {
+            display: flex;
+            background: rgba(255, 255, 255, 0.88);
+            padding: 6px;
+            border-radius: 14px;
+            border: 1px solid var(--border-default);
+            margin-bottom: 1rem;
+            gap: 6px;
+            box-shadow: 0 12px 30px rgba(8, 28, 34, 0.13);
+        }
+
+        .switch-option {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .switch-option.active-patient {
+            background: #FFFFFF;
+            color: var(--brand-primary);
+            box-shadow: 0 4px 12px rgba(24, 50, 58, 0.08);
+            border: 1px solid rgba(22, 124, 128, 0.2);
+        }
+
+        .switch-option.active-pharmacist {
+            background: #FFFFFF;
+            color: #168A5A;
+            box-shadow: 0 4px 12px rgba(22, 138, 90, 0.12);
+            border: 1px solid rgba(22, 138, 90, 0.25);
+        }
+
+        /* Glassmorphism Login Card */
+        .auth-card {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1.5px solid var(--border-default);
+            border-radius: 18px;
+            padding: 2.75rem 2.25rem;
+            box-shadow:
+                0 28px 56px -18px rgba(8, 28, 34, 0.26),
+                0 0 1px 1px rgba(24, 50, 58, 0.04);
+            transition: all 0.4s ease;
+        }
+
+        .auth-card.pharmacist-active {
+            border-color: #168A5A;
+            box-shadow: 0 20px 40px -15px rgba(22, 138, 90, 0.15);
+        }
+
+        .portal-header-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .patient-theme .portal-header-badge {
+            background: var(--primary-soft);
+            color: var(--brand-primary);
+        }
+
+        .pharmacist-theme .portal-header-badge {
+            background: #E8F7EF;
+            color: #168A5A;
+        }
+
+        .portal-title {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.35rem;
+        }
+
+        .portal-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.75rem;
+        }
+
+        /* Form Controls */
+        .portal-form-group {
+            margin-bottom: 1.35rem;
+            text-align: left;
+        }
+
+        .portal-form-group label {
+            display: block;
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
+        }
+
+        .portal-form-group input {
+            width: 100%;
+            padding: 0.95rem 1rem;
+            font-size: 0.95rem;
+            border: 1.5px solid var(--border-default);
+            border-radius: 10px;
+            background: #FFFFFF;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .portal-form-group input:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(22, 124, 128, 0.15);
+        }
+
+        .pharmacist-active .portal-form-group input:focus {
+            border-color: #168A5A;
+            box-shadow: 0 0 0 3px rgba(22, 138, 90, 0.15);
+        }
+
+        .btn-portal-submit {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dark));
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 14px rgba(22, 124, 128, 0.3);
+            margin-top: 0.5rem;
+        }
+
+        .pharmacist-active .btn-portal-submit {
+            background: linear-gradient(135deg, #168A5A, #0E6842);
+            box-shadow: 0 4px 14px rgba(22, 138, 90, 0.35);
+        }
+
+        .btn-portal-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 124, 128, 0.4);
+        }
+
+        .btn-portal-submit:disabled {
+            opacity: 0.75;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .portal-register-prompt {
+            margin-top: 1.75rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border-divider);
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .portal-register-prompt a {
+            color: var(--brand-primary);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .portal-register-prompt a:hover {
+            text-decoration: underline;
+        }
+
+        /* Demo Helper Pill */
+        .demo-credentials-pill {
+            background: linear-gradient(180deg, #F8FAFC, #EFF7F6);
+            border: 1px solid var(--border-default);
+            padding: 0.75rem 0.9rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            text-align: left;
+            line-height: 1.4;
         }
 
         /* Footer */
-        footer {
-            background: var(--white);
-            padding: 2rem;
+        .landing-footer {
+            background: #0A1F24;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 4rem 1.5rem 2rem 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-container {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-brand {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #FFFFFF;
+        }
+
+        .footer-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #5EEAD4;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2DD4BF;
+            box-shadow: 0 0 8px #2DD4BF;
+        }
+
+        .footer-bottom {
+            max-width: 1180px;
+            margin: 1.5rem auto 0 auto;
             text-align: center;
-            color: var(--text-light);
-            border-top: 1px solid #ddd;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 900px) {
+            .landing-nav {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 0.9rem;
+                padding: 0.9rem 1rem;
+            }
+
+            .nav-logo {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .nav-menu {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.9rem;
+            }
+
+            .nav-item,
+            .nav-cta {
+                min-width: 0;
+                text-align: center;
+                font-size: 0.84rem;
+                padding: 0.55rem 0.65rem;
+            }
+
+            .nav-item {
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 9999px;
+            }
+
+            .hero-stats,
+            .portal-card-container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-section {
+                text-align: left;
+                min-height: auto;
+                padding-top: 5rem;
+                background:
+                    linear-gradient(90deg, rgba(6, 25, 31, 0.94), rgba(8, 35, 42, 0.82)),
+                    url('https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=1600&auto=format&fit=crop') center / cover no-repeat;
+            }
+
+            .hero-title {
+                font-size: clamp(2.7rem, 14vw, 4rem);
+            }
+
+            .hero-actions {
+                margin-bottom: 2rem;
+            }
         }
     </style>
 </head>
-<body>
+<body class="landing-page">
 
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <h1 class="hero-title">MEDISYNC</h1>
-        <p class="hero-quote">"Bridging the gap between intelligent care and seamless pharmacy management."</p>
-        
-        <a href="#portal" class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 1.2rem; border-radius: 30px;">Access Portal</a>
-
-        <a href="#about" class="scroll-indicator">↓</a>
-    </div>
-
-    <!-- About Section -->
-    <div id="about" class="section">
-        <div class="container">
-            <h2 class="section-title">About Our Platform</h2>
-            <p class="about-text">
-                Medisync is a state-of-the-art health platform designed to connect patients directly with their local pharmacists. 
-                We eliminate the friction of lost prescriptions, missed dosages, and out-of-stock medications by bringing the entire 
-                pharmacy experience into a single, synchronized digital ecosystem.
-            </p>
+    <!-- Sticky Navigation Bar -->
+    <nav class="landing-nav">
+        <a href="index.html" class="nav-logo">
+            <span class="nav-logo-text">MEDISYNC</span>
+            <span class="nav-logo-badge">Clinical Suite</span>
+        </a>
+        <div class="nav-menu">
+            <a href="#features" class="nav-item">Platform Features</a>
+            <a href="#portal" class="nav-item">Portals</a>
+            <a href="register.html" class="nav-item">Patient Signup</a>
+            <a href="#portal" class="nav-cta">Access Portal</a>
         </div>
-    </div>
+    </nav>
+
+    <!-- High-Impact Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                <span>AI-Assisted Patient Care & Modern Pharmacy Coordination</span>
+            </div>
+
+            <h1 class="hero-title">
+                Medicine routines that feel effortless. <br>
+                <span class="hero-highlight">Pharmacy workflows that stay precise.</span>
+            </h1>
+
+            <p class="hero-desc">
+                MEDISYNC connects patients and pharmacists in one polished care workspace with timely dose reminders, prescription verification, refill support, stock control, and role-based dashboards.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#portal" onclick="setPortalMode('PATIENT')" class="btn-hero-primary">
+                    Patient Portal Login
+                </a>
+                <a href="#portal" onclick="setPortalMode('PHARMACIST')" class="btn-hero-secondary">
+                    Pharmacist POS Login
+                </a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-icon">⚡</span>
+                    <span>Automated Dose Reminders</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">📄</span>
+                    <span>Direct Digital Prescriptions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">📊</span>
+                    <span>Live Batch & Stock Tracking</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🔒</span>
+                    <span>Role-Segregated Access</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Features Section -->
-    <div class="section section-alt">
-        <div class="container">
-            <h2 class="section-title">Key Features</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⏰</div>
-                    <h3>Smart Reminders</h3>
-                    <p>Never miss a dose. Patients receive daily schedules and can instantly log whether a medication was taken or skipped.</p>
+    <section id="features" class="section-features">
+        <div class="section-header">
+            <span class="section-badge">Integrated Capabilities</span>
+            <h2 class="section-title">Engineered for Patients. Built for Pharmacies.</h2>
+            <p class="section-desc">
+                Everything required for daily adherence tracking and smooth pharmaceutical operations in one unified web platform.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card">
+                <span class="feature-tag">Patient Portal</span>
+                <div class="feature-icon-wrapper">⏰</div>
+                <h3>Intelligent Dose Reminders</h3>
+                <p>
+                    Set customizable daily and weekly schedules. Mark doses as taken or skipped with a single click and watch your adherence score climb in real-time.
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature-card">
+                <span class="feature-tag">Connected Care</span>
+                <div class="feature-icon-wrapper">📄</div>
+                <h3>Secure Digital Prescriptions</h3>
+                <p>
+                    Upload paper prescriptions instantly. Pharmacists review and verify medications directly, attaching notes and linking them to your patient profile.
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-card">
+                <span class="feature-tag">Pharmacist POS</span>
+                <div class="feature-icon-wrapper">💳</div>
+                <h3>Pharmacy Inventory & Billing</h3>
+                <p>
+                    Track medicine batches, low-stock thresholds, and expiration dates. Process customer sales at the counter with instant stock deduction and invoice generation.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portal Section -->
+    <section id="portal" class="section-portal">
+        <div class="section-header" style="margin-bottom: 2.5rem;">
+            <span class="section-badge">Secure Authentication</span>
+            <h2 class="section-title">Access Your Dedicated Portal</h2>
+            <p class="section-desc">
+                Select your role below to access your tailored dashboard and tools.
+            </p>
+        </div>
+
+        <div class="portal-card-container">
+            <div class="portal-proof-panel">
+                <div>
+                    <h3 class="portal-proof-title">One login, two coordinated healthcare workspaces.</h3>
+                    <p class="portal-proof-text">
+                        Patients get a guided adherence cockpit. Pharmacists get operational clarity across prescriptions, inventory, sales, and patient medication records.
+                    </p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📄</div>
-                    <h3>Secure Prescriptions</h3>
-                    <p>Upload your paper prescriptions securely. Pharmacists review, verify, and automatically link them to your profile.</p>
+                <div class="portal-proof-grid">
+                    <div class="proof-metric">
+                        <strong>83%</strong>
+                        <span>sample adherence score</span>
+                    </div>
+                    <div class="proof-metric">
+                        <strong>8</strong>
+                        <span>medicines in demo catalog</span>
+                    </div>
+                    <div class="proof-metric">
+                        <strong>Live</strong>
+                        <span>MySQL-backed sessions</span>
+                    </div>
+                    <div class="proof-metric">
+                        <strong>2</strong>
+                        <span>role-specific portals</span>
+                    </div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💳</div>
-                    <h3>Integrated Pharmacy POS</h3>
-                    <p>Pharmacists can manage live inventory, process point-of-sale transactions, and monitor real-time revenue analytics.</p>
+            </div>
+
+            <div class="portal-login-pane">
+                <!-- Segmented Switcher -->
+                <div class="portal-switcher">
+                    <button type="button" class="switch-option active-patient" id="btnSwitchPatient" onclick="setPortalMode('PATIENT')">
+                        <span>👤</span> Patient Portal
+                    </button>
+                    <button type="button" class="switch-option" id="btnSwitchPharmacist" onclick="setPortalMode('PHARMACIST')">
+                        <span>⚕️</span> Pharmacist Portal
+                    </button>
+                </div>
+
+                <!-- Login Card -->
+                <div class="auth-card patient-theme" id="portalAuthCard">
+                    <div style="text-align: left;">
+                        <span class="portal-header-badge" id="portalBadge">Patient Access</span>
+                        <h3 class="portal-title" id="portalHeading">Sign In to Patient Portal</h3>
+                        <p class="portal-subtitle" id="portalSub">Manage your medicines, reminders, and adherence records.</p>
+                    </div>
+
+                    <!-- Alert Box -->
+                    <div id="login-alert" class="alert"></div>
+
+                    <!-- Demo Credentials Helper -->
+                    <div class="demo-credentials-pill" id="demoCredentialsHint">
+                        <strong>Demo Credential:</strong> <br>
+                        <span id="demoCredText">Email: <code>test_patient@medisync.com</code> | Password: <code>password123</code></span>
+                    </div>
+
+                    <form id="login-form">
+                        <div class="portal-form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required placeholder="name@example.com" value="test_patient@medisync.com">
+                        </div>
+
+                        <div class="portal-form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required placeholder="Enter your password" value="password123">
+                        </div>
+
+                        <button type="submit" class="btn-portal-submit" id="loginBtnText">Sign In to Portal</button>
+                    </form>
+
+                    <div class="portal-register-prompt" id="registerPrompt">
+                        New patient? <a href="register.html">Create a free account →</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Login Section -->
-    <div id="portal" class="section">
-        <h2 class="section-title">Access Your Portal</h2>
-        <div class="login-wrapper">
-            <div class="glass-card" id="loginCard">
-                <h3 id="portal-title" style="color: var(--primary-color); font-size: 1.8rem; margin-bottom: 2rem;">Patient Login</h3>
-
-                <div id="login-alert" class="alert"></div>
-
-                <form id="login-form">
-                    <div class="form-group" style="text-align: left;">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" required placeholder="Enter your email">
-                    </div>
-                    <div class="form-group" style="text-align: left;">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required placeholder="Enter your password">
-                    </div>
-                    
-                    <button type="submit" class="btn-login" id="loginBtnText">Sign In</button>
-                </form>
-
-                <div class="register-link" id="registerLink" style="margin-top: 1rem;">
-                    New patient? <a href="register.html" style="color: var(--primary-color); font-weight: bold;">Create an account</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 
     <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 MEDISYNC Healthcare Solutions. All rights reserved.</p>
+    <footer class="landing-footer">
+        <div class="footer-container">
+            <div>
+                <div class="footer-brand">MEDISYNC</div>
+                <div style="font-size: 0.85rem; margin-top: 0.35rem;">Integrated Medicine Reminder & Pharmacy Management System</div>
+            </div>
+            <div class="footer-status">
+                <span class="status-indicator"></span>
+                <span>Core Services & MySQL Synchronization Online</span>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 MEDISYNC Healthcare Solutions. Built with Spring Boot & Vanilla JS.
+        </div>
     </footer>
 
-    <!-- Floating Pharmacist Toggle -->
-    <div class="floating-btn" id="pharmacistToggle">
-        <span class="icon">⚕️</span>
-        <span id="toggleText">Pharmacist Login</span>
-    </div>
-
-    <script src="js/api.js?v=3"></script>
+    <script src="js/api.js?v=4"></script>
     <script>
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
+        let currentRole = 'PATIENT';
 
-        // Toggle UI Logic
-        const toggleBtn = document.getElementById('pharmacistToggle');
-        const loginCard = document.getElementById('loginCard');
-        const portalTitle = document.getElementById('portal-title');
-        const toggleText = document.getElementById('toggleText');
-        const registerLink = document.getElementById('registerLink');
-        
-        let isPharmacistMode = false;
+        function setPortalMode(role) {
+            currentRole = role;
+            const card = document.getElementById('portalAuthCard');
+            const btnPatient = document.getElementById('btnSwitchPatient');
+            const btnPharmacist = document.getElementById('btnSwitchPharmacist');
+            const badge = document.getElementById('portalBadge');
+            const heading = document.getElementById('portalHeading');
+            const sub = document.getElementById('portalSub');
+            const regPrompt = document.getElementById('registerPrompt');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const demoCredText = document.getElementById('demoCredText');
 
-        toggleBtn.addEventListener('click', () => {
-            isPharmacistMode = !isPharmacistMode;
-            
-            if (isPharmacistMode) {
-                loginCard.classList.add('pharmacist-mode');
-                portalTitle.textContent = "Pharmacist Portal";
-                portalTitle.style.color = "#28a745";
-                toggleText.textContent = "Back to Patient Login";
-                registerLink.style.display = "none";
-                
-                // Scroll to portal if not already there
-                document.getElementById('portal').scrollIntoView({ behavior: 'smooth' });
+            if (role === 'PHARMACIST') {
+                btnPatient.className = 'switch-option';
+                btnPharmacist.className = 'switch-option active-pharmacist';
+                card.className = 'auth-card pharmacist-theme pharmacist-active';
+                badge.textContent = 'Pharmacist Operations';
+                heading.textContent = 'Sign In to Pharmacy POS';
+                sub.textContent = 'Manage inventory, verify prescriptions, and process sales.';
+                regPrompt.style.display = 'block';
+                regPrompt.innerHTML = 'New pharmacist? <a href="register.html?role=pharmacist">Create verified pharmacy account →</a>';
+                emailInput.value = 'pharmacist_real@medisync.com';
+                passwordInput.value = 'password123';
+                demoCredText.innerHTML = 'Email: <code>pharmacist_real@medisync.com</code> | Password: <code>password123</code>';
             } else {
-                loginCard.classList.remove('pharmacist-mode');
-                portalTitle.textContent = "Patient Login";
-                portalTitle.style.color = "var(--primary-color)";
-                toggleText.textContent = "Pharmacist Login";
-                registerLink.style.display = "block";
+                btnPatient.className = 'switch-option active-patient';
+                btnPharmacist.className = 'switch-option';
+                card.className = 'auth-card patient-theme';
+                badge.textContent = 'Patient Access';
+                heading.textContent = 'Sign In to Patient Portal';
+                sub.textContent = 'Manage your medicines, reminders, and adherence records.';
+                regPrompt.style.display = 'block';
+                regPrompt.innerHTML = 'New patient? <a href="register.html">Create a free account →</a>';
+                emailInput.value = 'test_patient@medisync.com';
+                passwordInput.value = 'password123';
+                demoCredText.innerHTML = 'Email: <code>test_patient@medisync.com</code> | Password: <code>password123</code>';
             }
-        });
+        }
 
         // Login Submission Logic
         const loginForm = document.getElementById('login-form');
@@ -351,12 +1066,12 @@
             if (res && res.success) {
                 const role = res.data.role;
                 if (role === 'PHARMACIST') {
-                    window.location.href = '/pharmacist/dashboard.html';
+                    window.location.href = 'pharmacist/dashboard.html';
                 } else {
-                    window.location.href = '/patient/dashboard.html';
+                    window.location.href = 'patient/dashboard.html';
                 }
             } else {
-                alertBox.textContent = res ? res.message : 'Login failed. Please try again.';
+                alertBox.textContent = res ? res.message : 'Login failed. Please check credentials.';
                 alertBox.className = 'alert error';
             }
         });
@@ -367,9 +1082,9 @@
             if (res && res.success) {
                 const role = res.data.role;
                 if (role === 'PHARMACIST') {
-                    window.location.href = '/pharmacist/dashboard.html';
+                    window.location.href = 'pharmacist/dashboard.html';
                 } else {
-                    window.location.href = '/patient/dashboard.html';
+                    window.location.href = 'patient/dashboard.html';
                 }
             }
         });

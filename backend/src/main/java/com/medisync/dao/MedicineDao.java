@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -33,6 +35,16 @@ public class MedicineDao {
         return m;
     };
 
+    public boolean existsById(Long pharmacistId, Long medicineId) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM Medicine WHERE pharmacist_id = ? AND medicine_id = ?",
+                Integer.class,
+                pharmacistId,
+                medicineId
+        );
+        return count != null && count > 0;
+    }
+
     public boolean existsById(Long medicineId) {
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM Medicine WHERE medicine_id = ?",
@@ -42,51 +54,99 @@ public class MedicineDao {
         return count != null && count > 0;
     }
 
-    public Long create(MedicineRequest req) {
-        String sql = "INSERT INTO Medicine (name, description, manufacturer) VALUES (?, ?, ?)";
+    public Long create(Long pharmacistId, MedicineRequest req) {
+        String sql = "INSERT INTO Medicine (pharmacist_id, name, description, manufacturer) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, req.getName());
-            ps.setString(2, req.getDescription());
-            ps.setString(3, req.getManufacturer());
+            ps.setLong(1, pharmacistId);
+            ps.setString(2, req.getName());
+            ps.setString(3, req.getDescription());
+            ps.setString(4, req.getManufacturer());
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();
     }
 
-    public List<MedicineResponse> findAll() {
-        String sql = "SELECT m.medicine_id, m.name, m.description, m.manufacturer, " +
-                     "SUM(ib.quantity_in_stock) as stock_quantity, MAX(ib.unit_price) as price " +
-                     "FROM Medicine m " +
-                     "LEFT JOIN InventoryBatch ib ON m.medicine_id = ib.medicine_id " +
-                     "GROUP BY m.medicine_id, m.name, m.description, m.manufacturer " +
-                     "ORDER BY m.name ASC";
-        return jdbcTemplate.query(sql, rowMapper);
+    public void createInventoryBatch(Long medicineId, String batchNumber, LocalDate expiryDate,
+                                     Integer quantityInStock, BigDecimal unitPrice) {
+        String sql = "INSERT INTO InventoryBatch " +
+                     "(medicine_id, batch_number, expiry_date, quantity_in_stock, unit_price) " +
+                     "VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, medicineId, batchNumber, expiryDate, quantityInStock, unitPrice);
     }
 
-    public MedicineResponse findById(Long id) {
+    public void updateInventorySnapshot(Long pharmacistId, Long medicineId, Integer stockQuantity, BigDecimal unitPrice) {
+        List<Long> batchIds = jdbcTemplate.query(
+                "SELECT ib.batch_id FROM InventoryBatch ib " +
+                        "JOIN Medicine m ON ib.medicine_id = m.medicine_id " +
+                        "WHERE m.pharmacist_id = ? AND ib.medicine_id = ? " +
+                        "ORDER BY ib.expiry_date DESC, ib.batch_id DESC LIMIT 1",
+                (rs, rowNum) -> rs.getLong("batch_id"),
+                pharmacistId,
+                medicineId
+        );
+
+        if (batchIds.isEmpty()) {
+            createInventoryBatch(
+                    medicineId,
+                    "MANUAL-" + medicineId,
+                    LocalDate.now().plusYears(2),
+                    stockQuantity,
+                    unitPrice
+            );
+            return;
+        }
+
+        Long primaryBatchId = batchIds.get(0);
+        jdbcTemplate.update(
+                "UPDATE InventoryBatch SET quantity_in_stock = 0, unit_price = ? WHERE medicine_id = ? AND batch_id <> ?",
+                unitPrice,
+                medicineId,
+                primaryBatchId
+        );
+        jdbcTemplate.update(
+                "UPDATE InventoryBatch SET quantity_in_stock = ?, unit_price = ? WHERE batch_id = ?",
+                stockQuantity,
+                unitPrice,
+                primaryBatchId
+        );
+    }
+
+    public List<MedicineResponse> findAll(Long pharmacistId) {
         String sql = "SELECT m.medicine_id, m.name, m.description, m.manufacturer, " +
-                     "SUM(ib.quantity_in_stock) as stock_quantity, MAX(ib.unit_price) as price " +
+                     "COALESCE(SUM(ib.quantity_in_stock), 0) as stock_quantity, MAX(ib.unit_price) as price " +
                      "FROM Medicine m " +
                      "LEFT JOIN InventoryBatch ib ON m.medicine_id = ib.medicine_id " +
-                     "WHERE m.medicine_id = ? " +
+                     "WHERE m.pharmacist_id = ? " +
+                     "GROUP BY m.medicine_id, m.name, m.description, m.manufacturer " +
+                     "ORDER BY m.name ASC";
+        return jdbcTemplate.query(sql, rowMapper, pharmacistId);
+    }
+
+    public MedicineResponse findById(Long pharmacistId, Long id) {
+        String sql = "SELECT m.medicine_id, m.name, m.description, m.manufacturer, " +
+                     "COALESCE(SUM(ib.quantity_in_stock), 0) as stock_quantity, MAX(ib.unit_price) as price " +
+                     "FROM Medicine m " +
+                     "LEFT JOIN InventoryBatch ib ON m.medicine_id = ib.medicine_id " +
+                     "WHERE m.pharmacist_id = ? AND m.medicine_id = ? " +
                      "GROUP BY m.medicine_id, m.name, m.description, m.manufacturer";
-        List<MedicineResponse> results = jdbcTemplate.query(sql, rowMapper, id);
+        List<MedicineResponse> results = jdbcTemplate.query(sql, rowMapper, pharmacistId, id);
         return results.isEmpty() ? null : results.get(0);
     }
 
-    public boolean update(Long id, MedicineRequest req) {
-        String sql = "UPDATE Medicine SET name=?, description=?, manufacturer=? WHERE medicine_id=?";
+    public boolean update(Long pharmacistId, Long id, MedicineRequest req) {
+        String sql = "UPDATE Medicine SET name=?, description=?, manufacturer=? WHERE pharmacist_id=? AND medicine_id=?";
         int rows = jdbcTemplate.update(sql,
                 req.getName(),
                 req.getDescription(),
                 req.getManufacturer(),
+                pharmacistId,
                 id);
         return rows > 0;
     }
 
-    public boolean delete(Long id) {
-        return jdbcTemplate.update("DELETE FROM Medicine WHERE medicine_id = ?", id) > 0;
+    public boolean delete(Long pharmacistId, Long id) {
+        return jdbcTemplate.update("DELETE FROM Medicine WHERE pharmacist_id = ? AND medicine_id = ?", pharmacistId, id) > 0;
     }
 }

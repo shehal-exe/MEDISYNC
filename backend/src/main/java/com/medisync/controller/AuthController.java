@@ -24,7 +24,7 @@ public class AuthController {
     private final SecurityContextRepository securityContextRepository;
     private final RememberMeServices rememberMeServices;
 
-    public AuthController(AuthService authService, AuthenticationManager authenticationManager, 
+    public AuthController(AuthService authService, AuthenticationManager authenticationManager,
                           SecurityContextRepository securityContextRepository, RememberMeServices rememberMeServices) {
         this.authService = authService;
         this.authenticationManager = authenticationManager;
@@ -33,12 +33,52 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request,
+                                                               HttpServletRequest httpRequest,
+                                                               HttpServletResponse httpResponse) {
         try {
             AuthResponse authResponse = authService.registerPatient(request);
+
+            // Automatically establish session in Spring Security
+            try {
+                Authentication authentication = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                securityContextRepository.saveContext(SecurityContextHolder.getContext(), httpRequest, httpResponse);
+            } catch (Exception authEx) {
+                // If auto-authentication fails, registration itself was still successful
+            }
+
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "User registered successfully", authResponse));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse<>(false, e.getMessage(), "REGISTRATION_FAILED"));
+        }
+    }
+
+    @PostMapping("/register/pharmacist")
+    public ResponseEntity<ApiResponse<AuthResponse>> registerPharmacist(
+            @Valid @RequestBody PharmacistRegisterRequest request,
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse) {
+        try {
+            AuthResponse authResponse = authService.registerPharmacist(request);
+
+            try {
+                Authentication authentication = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                securityContextRepository.saveContext(SecurityContextHolder.getContext(), httpRequest, httpResponse);
+            } catch (Exception authEx) {
+                // If auto-authentication fails, registration itself was still successful.
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse<>(true, "Pharmacist registered successfully", authResponse));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ApiResponse<>(false, e.getMessage(), "REGISTRATION_FAILED"));
         }
     }
 
@@ -50,7 +90,7 @@ public class AuthController {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             securityContextRepository.saveContext(SecurityContextHolder.getContext(), httpRequest, httpResponse);
-            
+
             // Invoke RememberMeServices if requested
             httpRequest.setAttribute("rememberMe", request.isRememberMe());
             rememberMeServices.loginSuccess(httpRequest, httpResponse, authentication);

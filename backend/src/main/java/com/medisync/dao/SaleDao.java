@@ -33,7 +33,7 @@ public class SaleDao {
         if (t != null) s.setSaleDate(t.toLocalDateTime());
         
         s.setTotalAmount(rs.getBigDecimal("total_amount"));
-        s.setPaymentStatus(rs.getString("payment_status"));
+        s.setPaymentStatus("COMPLETED");
         return s;
     };
 
@@ -41,7 +41,7 @@ public class SaleDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO Sale (patient_id, pharmacist_id, total_amount, payment_status) VALUES (?, ?, ?, 'COMPLETED')",
+                    "INSERT INTO Sale (patient_id, pharmacist_id, total_amount) VALUES (?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
             );
             if (patientId != null) {
@@ -60,8 +60,26 @@ public class SaleDao {
         return jdbcTemplate.query("SELECT * FROM Sale ORDER BY sale_date DESC", rowMapper);
     }
 
+    public List<SaleResponse> findAllByPharmacistId(Long pharmacistId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM Sale WHERE pharmacist_id = ? ORDER BY sale_date DESC",
+                rowMapper,
+                pharmacistId
+        );
+    }
+
     public SaleResponse findById(Long saleId) {
         List<SaleResponse> results = jdbcTemplate.query("SELECT * FROM Sale WHERE sale_id = ?", rowMapper, saleId);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    public SaleResponse findByIdAndPharmacistId(Long saleId, Long pharmacistId) {
+        List<SaleResponse> results = jdbcTemplate.query(
+                "SELECT * FROM Sale WHERE sale_id = ? AND pharmacist_id = ?",
+                rowMapper,
+                saleId,
+                pharmacistId
+        );
         return results.isEmpty() ? null : results.get(0);
     }
 }
