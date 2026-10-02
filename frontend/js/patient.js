@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         maximumFractionDigits: 2
     })}`;
 
+    const formatPercent = (value) => `${Number(value || 0).toFixed(2)}%`;
+
     const refillBadgeClass = (status) => {
         if (status === 'APPROVED' || status === 'COMPLETED') return 'success';
         if (status === 'REJECTED') return 'danger';
@@ -464,7 +466,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function loadScheduleAndAdherence() {
         const adRes = await fetchApi('/patient/adherence');
         if (adRes && adRes.success) {
-            document.getElementById('adherence-score').textContent = `${adRes.data.adherencePercentage}%`;
+            document.getElementById('adherence-score').textContent = formatPercent(adRes.data.adherencePercentage);
             updateDashboardSummary();
         }
 

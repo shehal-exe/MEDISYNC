@@ -110,12 +110,13 @@ public class MedicationReminderService {
         
         int total = taken + missed + skipped;
         double percentage = total == 0 ? 0.0 : ((double) taken / total) * 100.0;
+        double roundedPercentage = Math.round(percentage * 100.0) / 100.0;
         
         AdherenceResponse response = new AdherenceResponse();
         response.setTotalTaken(taken);
         response.setTotalMissed(missed);
         response.setTotalSkipped(skipped);
-        response.setAdherencePercentage(percentage);
+        response.setAdherencePercentage(roundedPercentage);
         return response;
     }
 }
