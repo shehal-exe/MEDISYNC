@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,7 +41,7 @@ public class ReportControllerTest {
         res.setTotalRevenue(new BigDecimal("1500.50"));
         res.setLowStockMedicines(new ArrayList<>());
 
-        when(reportService.getDashboardReport()).thenReturn(res);
+        when(reportService.getDashboardReport(eq("pharmacist@medisync.com"))).thenReturn(res);
 
         mockMvc.perform(get("/api/v1/pharmacist/reports/dashboard"))
                 .andExpect(status().isOk())

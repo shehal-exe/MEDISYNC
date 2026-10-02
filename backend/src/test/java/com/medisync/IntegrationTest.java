@@ -1,41 +1,80 @@
 package com.medisync;
 
+import com.medisync.controller.AuthController;
+import com.medisync.dto.AuthResponse;
+import com.medisync.security.CustomUserDetailsService;
+import com.medisync.security.SecurityConfig;
+import com.medisync.service.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebMvcTest(AuthController.class)
+@Import(SecurityConfig.class)
 public class IntegrationTest {
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private MockMvc mockMvc;
+
+    @MockBean
+    private AuthService authService;
+
+    @MockBean
+    private AuthenticationManager authenticationManager;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockBean
+    private RememberMeServices rememberMeServices;
 
     @Test
-    public void testRegistrationIsPublic() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String body = "{\"email\":\"new@example.com\",\"password\":\"password\",\"firstName\":\"John\",\"lastName\":\"Doe\"}";
-        HttpEntity<String> request = new HttpEntity<>(body, headers);
+    public void testRegistrationIsPublic() throws Exception {
+        String email = "public-register-" + System.nanoTime() + "@example.com";
+        when(authService.registerPatient(any())).thenReturn(new AuthResponse(1L, email, "PATIENT"));
+
+        String body = """
+                {
+                  "email": "%s",
+                  "password": "password",
+                  "firstName": "John",
+                  "lastName": "Doe"
+                }
+                """.formatted(email);
         
         // Test standard path
-        ResponseEntity<String> response = restTemplate.postForEntity("/api/v1/auth/register", request, String.class);
-        assertThat(response.getStatusCode()).isNotEqualTo(HttpStatus.UNAUTHORIZED);
+        MvcResult response = mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andReturn();
+        assertThat(response.getResponse().getStatus()).isNotEqualTo(HttpStatus.UNAUTHORIZED.value());
 
         // Test trailing slash
-        ResponseEntity<String> responseSlash = restTemplate.postForEntity("/api/v1/auth/register/", request, String.class);
-        assertThat(responseSlash.getStatusCode()).isNotEqualTo(HttpStatus.UNAUTHORIZED);
+        MvcResult responseSlash = mockMvc.perform(post("/api/v1/auth/register/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+                .andReturn();
+        assertThat(responseSlash.getResponse().getStatus()).isNotEqualTo(HttpStatus.UNAUTHORIZED.value());
 
         // Test OPTIONS (Preflight)
-        ResponseEntity<String> responseOptions = restTemplate.exchange("/api/v1/auth/register", HttpMethod.OPTIONS, new HttpEntity<>(new HttpHeaders()), String.class);
-        assertThat(responseOptions.getStatusCode()).isNotEqualTo(HttpStatus.UNAUTHORIZED);
+        MvcResult responseOptions = mockMvc.perform(options("/api/v1/auth/register")
+                .header("Origin", "http://localhost:8000")
+                .header("Access-Control-Request-Method", "POST"))
+                .andReturn();
+        assertThat(responseOptions.getResponse().getStatus()).isNotEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 }
