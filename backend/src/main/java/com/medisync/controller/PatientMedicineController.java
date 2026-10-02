@@ -2,6 +2,7 @@ package com.medisync.controller;
 
 import com.medisync.dto.ApiResponse;
 import com.medisync.dto.CreatePatientMedicineRequest;
+import com.medisync.dto.MedicineResponse;
 import com.medisync.dto.PatientMedicineResponse;
 import com.medisync.dto.UpdatePatientMedicineRequest;
 import com.medisync.service.PatientMedicineService;
@@ -27,6 +28,12 @@ public class PatientMedicineController {
     public ResponseEntity<ApiResponse<List<PatientMedicineResponse>>> getMyMedicines(Authentication authentication) {
         List<PatientMedicineResponse> medicines = patientMedicineService.getMyMedicines(authentication.getName());
         return ResponseEntity.ok(new ApiResponse<>(true, "Medicines fetched successfully", medicines));
+    }
+
+    @GetMapping("/catalog")
+    public ResponseEntity<ApiResponse<List<MedicineResponse>>> getMedicineCatalog() {
+        List<MedicineResponse> medicines = patientMedicineService.getMedicineCatalog();
+        return ResponseEntity.ok(new ApiResponse<>(true, "Medicine catalog fetched successfully", medicines));
     }
 
     @GetMapping("/{id}")

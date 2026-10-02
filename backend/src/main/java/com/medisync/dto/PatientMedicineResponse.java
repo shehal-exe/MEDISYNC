@@ -1,5 +1,6 @@
 package com.medisync.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class PatientMedicineResponse {
@@ -7,6 +8,9 @@ public class PatientMedicineResponse {
     private Long patientId;
     private Long medicineId;
     private String medicineName;
+    private String manufacturer;
+    private BigDecimal price;
+    private Integer stockQuantity;
     private String dosage;
     private String instructions;
     private Boolean isActive;
@@ -21,6 +25,12 @@ public class PatientMedicineResponse {
     public void setMedicineId(Long medicineId) { this.medicineId = medicineId; }
     public String getMedicineName() { return medicineName; }
     public void setMedicineName(String medicineName) { this.medicineName = medicineName; }
+    public String getManufacturer() { return manufacturer; }
+    public void setManufacturer(String manufacturer) { this.manufacturer = manufacturer; }
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
+    public Integer getStockQuantity() { return stockQuantity; }
+    public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
     public String getDosage() { return dosage; }
     public void setDosage(String dosage) { this.dosage = dosage; }
     public String getInstructions() { return instructions; }

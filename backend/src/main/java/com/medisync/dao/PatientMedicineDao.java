@@ -26,6 +26,9 @@ public class PatientMedicineDao {
         pm.setPatientId(rs.getLong("patient_id"));
         pm.setMedicineId(rs.getLong("medicine_id"));
         pm.setMedicineName(rs.getString("medicine_name"));
+        pm.setManufacturer(rs.getString("manufacturer"));
+        pm.setPrice(rs.getBigDecimal("price"));
+        pm.setStockQuantity(rs.getInt("stock_quantity"));
         pm.setDosage(rs.getString("dosage"));
         pm.setInstructions(rs.getString("instructions"));
         pm.setIsActive(rs.getBoolean("is_active"));
@@ -35,16 +38,27 @@ public class PatientMedicineDao {
     };
 
     public List<PatientMedicineResponse> findAllByPatientId(Long patientId) {
-        String sql = "SELECT pm.*, m.name as medicine_name FROM PatientMedicine pm " +
+        String sql = "SELECT pm.*, m.name AS medicine_name, m.manufacturer, " +
+                     "COALESCE(SUM(ib.quantity_in_stock), 0) AS stock_quantity, " +
+                     "COALESCE(MAX(ib.unit_price), 0) AS price " +
+                     "FROM PatientMedicine pm " +
                      "JOIN Medicine m ON pm.medicine_id = m.medicine_id " +
-                     "WHERE pm.patient_id = ?";
+                     "LEFT JOIN InventoryBatch ib ON m.medicine_id = ib.medicine_id " +
+                     "WHERE pm.patient_id = ? " +
+                     "GROUP BY pm.patient_medicine_id, pm.patient_id, pm.medicine_id, pm.dosage, pm.instructions, pm.is_active, pm.created_at, m.name, m.manufacturer " +
+                     "ORDER BY pm.created_at DESC";
         return jdbcTemplate.query(sql, rowMapper, patientId);
     }
 
     public PatientMedicineResponse findByIdAndPatientId(Long patientMedicineId, Long patientId) {
-        String sql = "SELECT pm.*, m.name as medicine_name FROM PatientMedicine pm " +
+        String sql = "SELECT pm.*, m.name AS medicine_name, m.manufacturer, " +
+                     "COALESCE(SUM(ib.quantity_in_stock), 0) AS stock_quantity, " +
+                     "COALESCE(MAX(ib.unit_price), 0) AS price " +
+                     "FROM PatientMedicine pm " +
                      "JOIN Medicine m ON pm.medicine_id = m.medicine_id " +
-                     "WHERE pm.patient_medicine_id = ? AND pm.patient_id = ?";
+                     "LEFT JOIN InventoryBatch ib ON m.medicine_id = ib.medicine_id " +
+                     "WHERE pm.patient_medicine_id = ? AND pm.patient_id = ? " +
+                     "GROUP BY pm.patient_medicine_id, pm.patient_id, pm.medicine_id, pm.dosage, pm.instructions, pm.is_active, pm.created_at, m.name, m.manufacturer";
         List<PatientMedicineResponse> results = jdbcTemplate.query(sql, rowMapper, patientMedicineId, patientId);
         return results.isEmpty() ? null : results.get(0);
     }

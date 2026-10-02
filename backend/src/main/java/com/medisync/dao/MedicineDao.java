@@ -124,6 +124,16 @@ public class MedicineDao {
         return jdbcTemplate.query(sql, rowMapper, pharmacistId);
     }
 
+    public List<MedicineResponse> findCatalog() {
+        String sql = "SELECT m.medicine_id, m.name, m.description, m.manufacturer, " +
+                     "COALESCE(SUM(ib.quantity_in_stock), 0) as stock_quantity, MAX(ib.unit_price) as price " +
+                     "FROM Medicine m " +
+                     "LEFT JOIN InventoryBatch ib ON m.medicine_id = ib.medicine_id " +
+                     "GROUP BY m.medicine_id, m.name, m.description, m.manufacturer " +
+                     "ORDER BY m.name ASC, m.medicine_id ASC";
+        return jdbcTemplate.query(sql, rowMapper);
+    }
+
     public MedicineResponse findById(Long pharmacistId, Long id) {
         String sql = "SELECT m.medicine_id, m.name, m.description, m.manufacturer, " +
                      "COALESCE(SUM(ib.quantity_in_stock), 0) as stock_quantity, MAX(ib.unit_price) as price " +
