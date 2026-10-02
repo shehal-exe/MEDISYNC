@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <tr>
                         <td>${new Date(p.uploadDate).toLocaleDateString()}</td>
                         <td>#${p.patientId}</td>
-                        <td><a href="http://localhost:8080${p.filePath}" target="_blank" style="color:var(--primary-color); font-weight: 600;">Review File</a></td>
+                        <td><a href="${window.BACKEND_DOMAIN}${p.filePath}" target="_blank" style="color:var(--primary-color); font-weight: 600;">Review File</a></td>
                         <td style="display: flex; gap: 8px;">
                             <button class="btn btn-primary" style="padding:6px 12px; font-size: 12px;" onclick="verifyPrescription(${p.prescriptionId}, 'VERIFIED')">Approve</button>
                             <button class="btn" style="background:var(--danger-soft); color:var(--danger); padding:6px 12px; font-size: 12px;" onclick="verifyPrescription(${p.prescriptionId}, 'REJECTED')">Reject</button>

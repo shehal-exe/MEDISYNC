@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 html += `
                     <tr>
                         <td>${new Date(p.uploadDate).toLocaleDateString()}</td>
-                        <td><a href="http://localhost:8080${p.filePath}" target="_blank" style="color: var(--primary-color); font-weight: 600;">View Medical PDF</a></td>
+                        <td><a href="${window.BACKEND_DOMAIN}${p.filePath}" target="_blank" style="color: var(--primary-color); font-weight: 600;">View Medical PDF</a></td>
                         <td><span class="badge ${badgeClass}">${p.status}</span></td>
                         <td style="color: var(--text-secondary); font-size: 13px;">${p.notes || 'Verified by Dr. Admin (PH-99999)'}</td>
                         <td>
@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch('http://localhost:8080/api/v1/patient/prescriptions', {
+                const response = await fetch(`${window.BACKEND_DOMAIN}/api/v1/patient/prescriptions`, {
                     method: 'POST',
                     body: formData,
                     credentials: 'include'

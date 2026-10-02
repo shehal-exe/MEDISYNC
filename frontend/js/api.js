@@ -1,5 +1,9 @@
-const API_HOST = window.location.hostname || 'localhost';
-const API_BASE_URL = `http://${API_HOST}:8080/api/v1`;
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+// NOTE FOR DEPLOYMENT: Replace PROD_BACKEND_URL with your actual deployed Railway/Render backend URL
+const PROD_BACKEND_URL = 'https://medisync-backend-production.up.railway.app';
+window.BACKEND_DOMAIN = isLocal ? 'http://localhost:8080' : PROD_BACKEND_URL;
+
+const API_BASE_URL = `${window.BACKEND_DOMAIN}/api/v1`;
 
 function redirectFilePreviewToLocalServer() {
     if (window.location.protocol !== 'file:') {
