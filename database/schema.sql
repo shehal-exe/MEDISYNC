@@ -39,16 +39,20 @@ CREATE TABLE IF NOT EXISTS PharmacistProfile (
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     license_number VARCHAR(100) NOT NULL UNIQUE,
+    public_handle VARCHAR(80) NOT NULL UNIQUE,
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
 -- 5. Medicine Table (Master Catalog)
 CREATE TABLE IF NOT EXISTS Medicine (
     medicine_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    pharmacist_id BIGINT NOT NULL,
     name VARCHAR(255) NOT NULL,
     manufacturer VARCHAR(255),
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (pharmacist_id) REFERENCES PharmacistProfile(pharmacist_id) ON DELETE RESTRICT,
+    INDEX idx_medicine_pharmacist_name (pharmacist_id, name),
     INDEX idx_medicine_name (name)
 );
 
@@ -126,7 +130,29 @@ CREATE TABLE IF NOT EXISTS PrescriptionItem (
     FOREIGN KEY (medicine_id) REFERENCES Medicine(medicine_id) ON DELETE RESTRICT
 );
 
--- 13. Notification Table
+-- 13. RefillRequest Table
+CREATE TABLE IF NOT EXISTS RefillRequest (
+    refill_request_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    patient_id BIGINT NOT NULL,
+    requested_pharmacist_id BIGINT NULL,
+    approved_by BIGINT NULL,
+    medicine_name VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    fulfillment_method ENUM('Pickup', 'Delivery') NOT NULL,
+    estimated_total DECIMAL(10, 2) NOT NULL,
+    status ENUM('PENDING', 'APPROVED', 'COMPLETED', 'REJECTED') DEFAULT 'PENDING',
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    pharmacist_notes TEXT,
+    FOREIGN KEY (patient_id) REFERENCES PatientProfile(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY (requested_pharmacist_id) REFERENCES PharmacistProfile(pharmacist_id) ON DELETE SET NULL,
+    FOREIGN KEY (approved_by) REFERENCES PharmacistProfile(pharmacist_id) ON DELETE SET NULL,
+    INDEX idx_refill_status (status),
+    INDEX idx_refill_requested_pharmacist (requested_pharmacist_id),
+    INDEX idx_refill_requested_at (requested_at)
+);
+
+-- 14. Notification Table
 CREATE TABLE IF NOT EXISTS Notification (
     notification_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
@@ -136,7 +162,7 @@ CREATE TABLE IF NOT EXISTS Notification (
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
--- 14. Customer Table
+-- 15. Customer Table
 CREATE TABLE IF NOT EXISTS Customer (
     customer_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -144,7 +170,7 @@ CREATE TABLE IF NOT EXISTS Customer (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 15. Sale Table
+-- 16. Sale Table
 CREATE TABLE IF NOT EXISTS Sale (
     sale_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     customer_id BIGINT NULL,
@@ -157,7 +183,7 @@ CREATE TABLE IF NOT EXISTS Sale (
     FOREIGN KEY (pharmacist_id) REFERENCES PharmacistProfile(pharmacist_id) ON DELETE RESTRICT
 );
 
--- 16. SaleItem Table
+-- 17. SaleItem Table
 CREATE TABLE IF NOT EXISTS SaleItem (
     sale_item_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     sale_id BIGINT NOT NULL,
@@ -168,7 +194,7 @@ CREATE TABLE IF NOT EXISTS SaleItem (
     FOREIGN KEY (batch_id) REFERENCES InventoryBatch(batch_id) ON DELETE RESTRICT
 );
 
--- 17. Invoice Table
+-- 18. Invoice Table
 CREATE TABLE IF NOT EXISTS Invoice (
     invoice_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     sale_id BIGINT NOT NULL UNIQUE,
@@ -179,7 +205,7 @@ CREATE TABLE IF NOT EXISTS Invoice (
     FOREIGN KEY (sale_id) REFERENCES Sale(sale_id) ON DELETE RESTRICT
 );
 
--- 18. InvoiceItem Table
+-- 19. InvoiceItem Table
 CREATE TABLE IF NOT EXISTS InvoiceItem (
     invoice_item_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     invoice_id BIGINT NOT NULL,
@@ -190,7 +216,7 @@ CREATE TABLE IF NOT EXISTS InvoiceItem (
     FOREIGN KEY (medicine_id) REFERENCES Medicine(medicine_id) ON DELETE RESTRICT
 );
 
--- 19. PasswordResetToken Table
+-- 20. PasswordResetToken Table
 CREATE TABLE IF NOT EXISTS PasswordResetToken (
     token_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
@@ -200,7 +226,7 @@ CREATE TABLE IF NOT EXISTS PasswordResetToken (
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
--- 20. AuditLog Table
+-- 21. AuditLog Table
 CREATE TABLE IF NOT EXISTS AuditLog (
     log_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NULL,

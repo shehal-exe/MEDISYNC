@@ -32,7 +32,7 @@ public class PrescriptionDao {
         response.setStatus(rs.getString("status"));
         response.setNotes(rs.getString("notes"));
         response.setPatientId(rs.getLong("patient_id"));
-        response.setPharmacistId(rs.getObject("pharmacist_id") != null ? rs.getLong("pharmacist_id") : null);
+        response.setPharmacistId(rs.getObject("verified_by") != null ? rs.getLong("verified_by") : null);
         return response;
     };
 
@@ -67,9 +67,19 @@ public class PrescriptionDao {
         return jdbcTemplate.query(sql, rowMapper);
     }
 
+    public List<PrescriptionResponse> findAllByPharmacistId(Long pharmacistId) {
+        String sql = "SELECT * FROM Prescription WHERE verified_by = ? OR verified_by IS NULL ORDER BY upload_date DESC";
+        return jdbcTemplate.query(sql, rowMapper, pharmacistId);
+    }
+
     public List<PrescriptionResponse> findByStatus(String status) {
         String sql = "SELECT * FROM Prescription WHERE status = ? ORDER BY upload_date DESC";
         return jdbcTemplate.query(sql, rowMapper, status);
+    }
+
+    public List<PrescriptionResponse> findByPharmacistIdAndStatus(Long pharmacistId, String status) {
+        String sql = "SELECT * FROM Prescription WHERE (verified_by = ? OR verified_by IS NULL) AND status = ? ORDER BY upload_date DESC";
+        return jdbcTemplate.query(sql, rowMapper, pharmacistId, status);
     }
 
     public PrescriptionResponse findById(Long prescriptionId) {
@@ -78,9 +88,15 @@ public class PrescriptionDao {
         return results.isEmpty() ? null : results.get(0);
     }
 
+    public PrescriptionResponse findByIdAndPharmacistId(Long prescriptionId, Long pharmacistId) {
+        String sql = "SELECT * FROM Prescription WHERE prescription_id = ? AND (verified_by = ? OR verified_by IS NULL)";
+        List<PrescriptionResponse> results = jdbcTemplate.query(sql, rowMapper, prescriptionId, pharmacistId);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
     public int updateStatus(Long prescriptionId, Long pharmacistId, String status, String notes) {
         return jdbcTemplate.update(
-                "UPDATE Prescription SET pharmacist_id = ?, status = ?, notes = ? WHERE prescription_id = ?",
+                "UPDATE Prescription SET verified_by = ?, status = ?, notes = ? WHERE prescription_id = ?",
                 pharmacistId, status, notes, prescriptionId
         );
     }

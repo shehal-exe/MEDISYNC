@@ -28,16 +28,37 @@ public class SaleItemDao {
         return item;
     };
 
-    public void create(Long saleId, Long medicineId, int quantity, BigDecimal unitPrice, BigDecimal totalPrice) {
+    public void create(Long pharmacistId, Long saleId, Long medicineId, int quantity, BigDecimal unitPrice, BigDecimal totalPrice) {
+        Long batchId = jdbcTemplate.queryForObject(
+                "SELECT ib.batch_id FROM InventoryBatch ib " +
+                "JOIN Medicine m ON ib.medicine_id = m.medicine_id " +
+                "WHERE m.pharmacist_id = ? AND ib.medicine_id = ? AND ib.quantity_in_stock >= ? " +
+                "ORDER BY ib.expiry_date ASC LIMIT 1",
+                Long.class,
+                pharmacistId,
+                medicineId,
+                quantity
+        );
+
         jdbcTemplate.update(
-                "INSERT INTO SaleItem (sale_id, medicine_id, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?)",
-                saleId, medicineId, quantity, unitPrice, totalPrice
+                "UPDATE InventoryBatch SET quantity_in_stock = quantity_in_stock - ? WHERE batch_id = ?",
+                quantity,
+                batchId
+        );
+
+        jdbcTemplate.update(
+                "INSERT INTO SaleItem (sale_id, batch_id, quantity, price_at_sale) VALUES (?, ?, ?, ?)",
+                saleId, batchId, quantity, unitPrice
         );
     }
 
     public List<SaleItemResponse> findBySaleId(Long saleId) {
-        String sql = "SELECT si.*, m.name as medicine_name FROM SaleItem si " +
-                     "JOIN Medicine m ON si.medicine_id = m.medicine_id " +
+        String sql = "SELECT si.sale_item_id, ib.medicine_id, m.name as medicine_name, " +
+                     "si.quantity, si.price_at_sale as unit_price, " +
+                     "(si.price_at_sale * si.quantity) as total_price " +
+                     "FROM SaleItem si " +
+                     "JOIN InventoryBatch ib ON si.batch_id = ib.batch_id " +
+                     "JOIN Medicine m ON ib.medicine_id = m.medicine_id " +
                      "WHERE si.sale_id = ?";
         return jdbcTemplate.query(sql, rowMapper, saleId);
     }

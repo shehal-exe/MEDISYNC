@@ -44,7 +44,7 @@ public class SaleService {
         
         // Validation and Subtotal calculation
         for (SaleItemRequest itemReq : request.getItems()) {
-            MedicineResponse med = medicineDao.findById(itemReq.getMedicineId());
+            MedicineResponse med = medicineDao.findById(pharmacistId, itemReq.getMedicineId());
             if (med == null) {
                 throw new IllegalArgumentException("Medicine ID " + itemReq.getMedicineId() + " not found");
             }
@@ -60,32 +60,22 @@ public class SaleService {
 
         // Process items
         for (SaleItemRequest itemReq : request.getItems()) {
-            MedicineResponse med = medicineDao.findById(itemReq.getMedicineId());
+            MedicineResponse med = medicineDao.findById(pharmacistId, itemReq.getMedicineId());
             BigDecimal itemTotal = med.getPrice().multiply(new BigDecimal(itemReq.getQuantity()));
-            
-            // Deduct stock
-            MedicineRequest updateReq = new MedicineRequest();
-            updateReq.setName(med.getName());
-            updateReq.setDescription(med.getDescription());
-            updateReq.setManufacturer(med.getManufacturer());
-            updateReq.setPrice(med.getPrice());
-            updateReq.setRequiresPrescription(med.getRequiresPrescription());
-            updateReq.setStockQuantity(med.getStockQuantity() - itemReq.getQuantity());
-            medicineDao.update(med.getMedicineId(), updateReq);
-            
+
             // Record SaleItem
-            saleItemDao.create(saleId, med.getMedicineId(), itemReq.getQuantity(), med.getPrice(), itemTotal);
+            saleItemDao.create(pharmacistId, saleId, med.getMedicineId(), itemReq.getQuantity(), med.getPrice(), itemTotal);
         }
 
-        return getSaleById(saleId);
+        return getSaleById(email, saleId);
     }
 
-    public List<SaleResponse> getAllSales() {
-        return saleDao.findAll();
+    public List<SaleResponse> getAllSales(String email) {
+        return saleDao.findAllByPharmacistId(getPharmacistIdByEmail(email));
     }
 
-    public SaleResponse getSaleById(Long saleId) {
-        SaleResponse sale = saleDao.findById(saleId);
+    public SaleResponse getSaleById(String email, Long saleId) {
+        SaleResponse sale = saleDao.findByIdAndPharmacistId(saleId, getPharmacistIdByEmail(email));
         if (sale == null) {
             throw new IllegalArgumentException("Sale not found");
         }

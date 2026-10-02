@@ -8,6 +8,7 @@ public class PharmacistProfileResponse {
     private String firstName;
     private String lastName;
     private String licenseNumber;
+    private String publicHandle;
     private String contactNumber;
     private LocalDate hireDate;
     private String email;
@@ -26,6 +27,9 @@ public class PharmacistProfileResponse {
 
     public String getLicenseNumber() { return licenseNumber; }
     public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
+
+    public String getPublicHandle() { return publicHandle; }
+    public void setPublicHandle(String publicHandle) { this.publicHandle = publicHandle; }
 
     public String getContactNumber() { return contactNumber; }
     public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }

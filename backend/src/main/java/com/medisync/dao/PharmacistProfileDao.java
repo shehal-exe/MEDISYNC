@@ -24,13 +24,7 @@ public class PharmacistProfileDao {
         profile.setFirstName(rs.getString("first_name"));
         profile.setLastName(rs.getString("last_name"));
         profile.setLicenseNumber(rs.getString("license_number"));
-        profile.setContactNumber(rs.getString("contact_number"));
-        
-        java.sql.Date hd = rs.getDate("hire_date");
-        if (hd != null) {
-            profile.setHireDate(hd.toLocalDate());
-        }
-        
+        profile.setPublicHandle(rs.getString("public_handle"));
         profile.setEmail(rs.getString("email"));
         return profile;
     };
@@ -43,12 +37,76 @@ public class PharmacistProfileDao {
         return results.isEmpty() ? null : results.get(0);
     }
 
+    public PharmacistProfileResponse getProfileByPharmacistId(Long pharmacistId) {
+        String sql = "SELECT p.*, u.email FROM PharmacistProfile p " +
+                     "JOIN User u ON p.user_id = u.user_id " +
+                     "WHERE p.pharmacist_id = ?";
+        List<PharmacistProfileResponse> results = jdbcTemplate.query(sql, rowMapper, pharmacistId);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    public List<PharmacistProfileResponse> findAllProfiles() {
+        String sql = "SELECT p.*, u.email FROM PharmacistProfile p " +
+                     "JOIN User u ON p.user_id = u.user_id " +
+                     "ORDER BY p.first_name, p.last_name, p.public_handle";
+        return jdbcTemplate.query(sql, rowMapper);
+    }
+
+    public Long getUserIdByPharmacistId(Long pharmacistId) {
+        List<Long> results = jdbcTemplate.query(
+                "SELECT user_id FROM PharmacistProfile WHERE pharmacist_id = ?",
+                (rs, rowNum) -> rs.getLong("user_id"),
+                pharmacistId
+        );
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    public boolean isDisplayNameTaken(Long currentUserId, String firstName, String lastName) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM PharmacistProfile " +
+                        "WHERE LOWER(first_name) = LOWER(?) AND LOWER(last_name) = LOWER(?) AND user_id <> ?",
+                Integer.class,
+                firstName,
+                lastName,
+                currentUserId
+        );
+        return count != null && count > 0;
+    }
+
+    public boolean isLicenseNumberTaken(String licenseNumber) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM PharmacistProfile WHERE LOWER(license_number) = LOWER(?)",
+                Integer.class,
+                licenseNumber
+        );
+        return count != null && count > 0;
+    }
+
+    public boolean isPublicHandleTaken(String publicHandle) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM PharmacistProfile WHERE LOWER(public_handle) = LOWER(?)",
+                Integer.class,
+                publicHandle
+        );
+        return count != null && count > 0;
+    }
+
+    public void createProfile(Long userId, String firstName, String lastName, String licenseNumber, String publicHandle) {
+        jdbcTemplate.update(
+                "INSERT INTO PharmacistProfile (user_id, first_name, last_name, license_number, public_handle) VALUES (?, ?, ?, ?, ?)",
+                userId,
+                firstName,
+                lastName,
+                licenseNumber,
+                publicHandle
+        );
+    }
+
     public boolean updateProfile(Long userId, UpdatePharmacistProfileRequest request) {
-        String sql = "UPDATE PharmacistProfile SET first_name = ?, last_name = ?, contact_number = ? WHERE user_id = ?";
+        String sql = "UPDATE PharmacistProfile SET first_name = ?, last_name = ? WHERE user_id = ?";
         int rowsAffected = jdbcTemplate.update(sql,
                 request.getFirstName(),
                 request.getLastName(),
-                request.getContactNumber(),
                 userId
         );
         return rowsAffected > 0;

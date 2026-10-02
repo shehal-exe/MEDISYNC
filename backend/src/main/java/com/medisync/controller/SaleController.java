@@ -35,15 +35,15 @@ public class SaleController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<SaleResponse>>> getAllSales() {
-        List<SaleResponse> list = saleService.getAllSales();
+    public ResponseEntity<ApiResponse<List<SaleResponse>>> getAllSales(Authentication authentication) {
+        List<SaleResponse> list = saleService.getAllSales(authentication.getName());
         return ResponseEntity.ok(new ApiResponse<>(true, "Sales retrieved successfully", list));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<SaleResponse>> getSaleDetails(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<SaleResponse>> getSaleDetails(@PathVariable Long id, Authentication authentication) {
         try {
-            SaleResponse response = saleService.getSaleById(id);
+            SaleResponse response = saleService.getSaleById(authentication.getName(), id);
             return ResponseEntity.ok(new ApiResponse<>(true, "Sale details retrieved successfully", response));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, e.getMessage(), "NOT_FOUND"));

@@ -41,15 +41,16 @@ public class PharmacistPrescriptionService {
         return profile.getPharmacistId();
     }
 
-    public List<PrescriptionResponse> getAllPrescriptions(String status) {
+    public List<PrescriptionResponse> getAllPrescriptions(String email, String status) {
+        Long pharmacistId = getPharmacistId(email);
         if (status != null && !status.trim().isEmpty()) {
-            return prescriptionDao.findByStatus(status.toUpperCase());
+            return prescriptionDao.findByPharmacistIdAndStatus(pharmacistId, status.toUpperCase());
         }
-        return prescriptionDao.findAll();
+        return prescriptionDao.findAllByPharmacistId(pharmacistId);
     }
 
-    public PrescriptionResponse getPrescription(Long id) {
-        PrescriptionResponse res = prescriptionDao.findById(id);
+    public PrescriptionResponse getPrescription(String email, Long id) {
+        PrescriptionResponse res = prescriptionDao.findByIdAndPharmacistId(id, getPharmacistId(email));
         if (res == null) throw new IllegalArgumentException("Prescription not found");
         return res;
     }
@@ -57,7 +58,7 @@ public class PharmacistPrescriptionService {
     public PrescriptionResponse updateStatus(String email, Long prescriptionId, UpdatePrescriptionStatusRequest request) {
         Long pharmacistId = getPharmacistId(email);
         
-        PrescriptionResponse existing = prescriptionDao.findById(prescriptionId);
+        PrescriptionResponse existing = prescriptionDao.findByIdAndPharmacistId(prescriptionId, pharmacistId);
         if (existing == null) {
             throw new IllegalArgumentException("Prescription not found");
         }
