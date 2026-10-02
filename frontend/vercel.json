@@ -9,6 +9,14 @@
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "https://medisync-backend-production.up.railway.app/api/$1"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "https://medisync-backend-production.up.railway.app/uploads/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
