@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 alertBox.textContent = res ? res.message : 'Login failed. Please try again.';
                 alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
             }
         });
     }
@@ -131,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (res && res.success) {
                 alertBox.textContent = 'Registration successful! Logging you in...';
                 alertBox.className = 'alert success';
+                alertBox.style.display = 'block';
                 
                 // Explicitly log in via /auth/login to guarantee session is established
                 try {
@@ -141,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (loginRes && loginRes.success) {
                         alertBox.textContent = 'Registration successful! Redirecting to your dashboard...';
+                        alertBox.style.display = 'block';
                         setTimeout(() => {
                             window.location.href = loginRes.data.role === 'PHARMACIST'
                                 ? 'pharmacist/dashboard.html'
@@ -153,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 alertBox.textContent = 'Registration successful! Please sign in to continue.';
+                alertBox.style.display = 'block';
                 setTimeout(() => {
                     window.location.href = 'index.html#portal';
                 }, 1400);
@@ -164,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 alertBox.textContent = errorMsg;
                 alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
             }
         });
     }
