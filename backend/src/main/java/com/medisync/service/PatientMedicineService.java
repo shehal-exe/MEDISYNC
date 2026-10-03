@@ -5,6 +5,7 @@ import com.medisync.dao.PatientMedicineDao;
 import com.medisync.dao.PatientProfileDao;
 import com.medisync.dao.UserDao;
 import com.medisync.dto.CreatePatientMedicineRequest;
+import com.medisync.dto.MedicineResponse;
 import com.medisync.dto.PatientMedicineResponse;
 import com.medisync.dto.PatientProfileResponse;
 import com.medisync.dto.UpdatePatientMedicineRequest;
@@ -40,6 +41,10 @@ public class PatientMedicineService {
     public List<PatientMedicineResponse> getMyMedicines(String email) {
         Long patientId = getPatientIdByEmail(email);
         return patientMedicineDao.findAllByPatientId(patientId);
+    }
+
+    public List<MedicineResponse> getMedicineCatalog() {
+        return medicineDao.findCatalog();
     }
 
     public PatientMedicineResponse getMyMedicineById(String email, Long patientMedicineId) {

@@ -72,7 +72,7 @@ public class SaleControllerTest {
         res.setSaleId(1L);
         res.setTotalAmount(new BigDecimal("10.00"));
 
-        when(saleService.getAllSales()).thenReturn(List.of(res));
+        when(saleService.getAllSales(eq("pharmacist@medisync.com"))).thenReturn(List.of(res));
 
         mockMvc.perform(get("/api/v1/pharmacist/sales"))
                 .andExpect(status().isOk())

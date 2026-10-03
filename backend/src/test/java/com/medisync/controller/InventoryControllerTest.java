@@ -49,7 +49,7 @@ public class InventoryControllerTest {
         res.setName("Aspirin");
         res.setPrice(new BigDecimal("5.99"));
 
-        when(inventoryService.getAllMedicines()).thenReturn(List.of(res));
+        when(inventoryService.getAllMedicines(eq("pharmacist@medisync.com"))).thenReturn(List.of(res));
 
         mockMvc.perform(get("/api/v1/pharmacist/inventory"))
                 .andExpect(status().isOk())
@@ -69,7 +69,7 @@ public class InventoryControllerTest {
         res.setMedicineId(2L);
         res.setName("Ibuprofen");
 
-        when(inventoryService.addMedicine(any())).thenReturn(res);
+        when(inventoryService.addMedicine(eq("pharmacist@medisync.com"), any(MedicineRequest.class))).thenReturn(res);
 
         mockMvc.perform(post("/api/v1/pharmacist/inventory")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -82,7 +82,7 @@ public class InventoryControllerTest {
     @Test
     @WithMockUser(username = "pharmacist@medisync.com", roles = {"PHARMACIST"})
     void testDeleteMedicine() throws Exception {
-        doNothing().when(inventoryService).deleteMedicine(1L);
+        doNothing().when(inventoryService).deleteMedicine(eq("pharmacist@medisync.com"), eq(1L));
 
         mockMvc.perform(delete("/api/v1/pharmacist/inventory/1"))
                 .andExpect(status().isOk())

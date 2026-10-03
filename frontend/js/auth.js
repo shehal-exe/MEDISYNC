@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 alertBox.textContent = res ? res.message : 'Login failed. Please try again.';
                 alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
             }
         });
     }
@@ -102,12 +103,26 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const alertBox = document.getElementById('register-alert');
             alertBox.style.display = 'none';
+            const password = document.getElementById('password').value;
+            const confirmPasswordInput = document.getElementById('confirmRegisterPassword');
+            const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value : password;
+
+            if (password !== confirmPassword) {
+                alertBox.textContent = "Passwords don't match. Please re-enter your password.";
+                alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
+                if (confirmPasswordInput) {
+                    confirmPasswordInput.value = '';
+                    confirmPasswordInput.focus();
+                }
+                return;
+            }
 
             const formData = {
                 firstName: document.getElementById('firstName').value,
                 lastName: document.getElementById('lastName').value,
                 email: document.getElementById('email').value,
-                password: document.getElementById('password').value,
+                password,
                 contactNumber: document.getElementById('contactNumber').value,
                 dateOfBirth: document.getElementById('dateOfBirth').value,
                 licenseNumber: document.getElementById('licenseNumber') ? document.getElementById('licenseNumber').value : ''
@@ -131,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (res && res.success) {
                 alertBox.textContent = 'Registration successful! Logging you in...';
                 alertBox.className = 'alert success';
+                alertBox.style.display = 'block';
                 
                 // Explicitly log in via /auth/login to guarantee session is established
                 try {
@@ -141,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (loginRes && loginRes.success) {
                         alertBox.textContent = 'Registration successful! Redirecting to your dashboard...';
+                        alertBox.style.display = 'block';
                         setTimeout(() => {
                             window.location.href = loginRes.data.role === 'PHARMACIST'
                                 ? 'pharmacist/dashboard.html'
@@ -153,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 alertBox.textContent = 'Registration successful! Please sign in to continue.';
+                alertBox.style.display = 'block';
                 setTimeout(() => {
                     window.location.href = 'index.html#portal';
                 }, 1400);
@@ -164,6 +182,125 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 alertBox.textContent = errorMsg;
                 alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
+            }
+        });
+    }
+
+    // FORGOT PASSWORD
+    const forgotPasswordForm = document.getElementById('forgot-password-form');
+    if (forgotPasswordForm) {
+        forgotPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertBox = document.getElementById('forgot-alert');
+            const resetPanel = document.getElementById('demoResetPanel');
+            const tokenOutput = document.getElementById('demoResetToken');
+            const resetLink = document.getElementById('openResetPageLink');
+
+            alertBox.style.display = 'none';
+            if (resetPanel) resetPanel.classList.remove('is-visible');
+
+            const email = document.getElementById('forgotEmail').value;
+            const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
+            const origText = submitBtn.innerText;
+            submitBtn.innerText = 'Sending...';
+            submitBtn.disabled = true;
+
+            const res = await fetchApi('/auth/forgot-password', {
+                method: 'POST',
+                body: JSON.stringify({ email })
+            });
+
+            submitBtn.innerText = origText;
+            submitBtn.disabled = false;
+
+            if (res && res.success) {
+                alertBox.textContent = res.message;
+                alertBox.className = 'alert success';
+                alertBox.style.display = 'block';
+
+                const resetToken = res.data && res.data.resetToken;
+                if (resetToken && resetPanel && tokenOutput && resetLink) {
+                    tokenOutput.textContent = resetToken;
+                    resetLink.href = `reset-password.html?token=${encodeURIComponent(resetToken)}`;
+                    resetPanel.classList.add('is-visible');
+                }
+            } else {
+                alertBox.textContent = res ? res.message : 'Unable to request password reset.';
+                alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
+            }
+        });
+
+        const copyResetTokenBtn = document.getElementById('copyResetTokenBtn');
+        if (copyResetTokenBtn) {
+            copyResetTokenBtn.addEventListener('click', async () => {
+                const token = document.getElementById('demoResetToken').textContent;
+                if (!token) return;
+
+                try {
+                    await navigator.clipboard.writeText(token);
+                    copyResetTokenBtn.textContent = 'Copied';
+                    setTimeout(() => {
+                        copyResetTokenBtn.textContent = 'Copy';
+                    }, 1500);
+                } catch (err) {
+                    console.warn('Clipboard copy failed:', err);
+                }
+            });
+        }
+    }
+
+    // RESET PASSWORD
+    const resetPasswordForm = document.getElementById('reset-password-form');
+    if (resetPasswordForm) {
+        const tokenInput = document.getElementById('resetToken');
+        const params = new URLSearchParams(window.location.search);
+        const tokenFromUrl = params.get('token');
+        if (tokenFromUrl && tokenInput) {
+            tokenInput.value = tokenFromUrl;
+        }
+
+        resetPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertBox = document.getElementById('reset-alert');
+            alertBox.style.display = 'none';
+
+            const token = tokenInput.value.trim();
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                alertBox.textContent = 'Passwords do not match.';
+                alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            const submitBtn = resetPasswordForm.querySelector('button[type="submit"]');
+            const origText = submitBtn.innerText;
+            submitBtn.innerText = 'Updating...';
+            submitBtn.disabled = true;
+
+            const res = await fetchApi('/auth/reset-password', {
+                method: 'POST',
+                body: JSON.stringify({ token, newPassword })
+            });
+
+            submitBtn.innerText = origText;
+            submitBtn.disabled = false;
+
+            if (res && res.success) {
+                alertBox.textContent = 'Password updated. Redirecting to login...';
+                alertBox.className = 'alert success';
+                alertBox.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = 'index.html#portal';
+                }, 1300);
+            } else {
+                alertBox.textContent = res ? res.message : 'Unable to reset password.';
+                alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
             }
         });
     }

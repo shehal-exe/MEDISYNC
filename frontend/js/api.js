@@ -1,7 +1,15 @@
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-// NOTE FOR DEPLOYMENT: Replace PROD_BACKEND_URL with your actual deployed Railway/Render backend URL
+const isLocal = window.location.protocol === 'file:' ||
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1';
+const LOCAL_BACKEND_URL = window.location.hostname === '127.0.0.1'
+    ? 'http://127.0.0.1:8080'
+    : 'http://localhost:8080';
+
+// NOTE FOR DEPLOYMENT: Replace PROD_BACKEND_URL with your actual deployed Railway/Render backend URL.
+// Production browser requests go through the same-origin Vercel proxy so session cookies are not blocked.
 const PROD_BACKEND_URL = 'https://medisync-backend-production.up.railway.app';
-window.BACKEND_DOMAIN = isLocal ? 'http://localhost:8080' : PROD_BACKEND_URL;
+window.DIRECT_BACKEND_DOMAIN = isLocal ? LOCAL_BACKEND_URL : PROD_BACKEND_URL;
+window.BACKEND_DOMAIN = isLocal ? LOCAL_BACKEND_URL : window.location.origin;
 
 const API_BASE_URL = `${window.BACKEND_DOMAIN}/api/v1`;
 

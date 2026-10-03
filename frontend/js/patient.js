@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         maximumFractionDigits: 2
     })}`;
 
+    const formatPercent = (value) => `${Number(value || 0).toFixed(2)}%`;
+
     const refillBadgeClass = (status) => {
         if (status === 'APPROVED' || status === 'COMPLETED') return 'success';
         if (status === 'REJECTED') return 'danger';
@@ -42,12 +44,137 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const formatDateTime = (value) => value ? new Date(value).toLocaleString() : 'Just now';
     let pharmacistDirectory = [];
+    let patientMedicinesCache = [];
+    let medicineCatalogCache = [];
+    let prescriptionCache = [];
+    let refillRequestCache = [];
+    let reminderCache = [];
 
     const formatPharmacistLabel = (pharmacist) => {
         const name = getProfileName(pharmacist, 'Pharmacist');
         const handle = pharmacist.publicHandle ? `@${pharmacist.publicHandle}` : `#${pharmacist.pharmacistId}`;
         return `${name} (${handle})`;
     };
+
+    const getMedicineLabel = (medicine) => {
+        const manufacturer = medicine.manufacturer ? ` (${medicine.manufacturer})` : '';
+        return `${medicine.medicineName || medicine.name}${manufacturer}`;
+    };
+
+    function renderInteractionOverview() {
+        const container = document.getElementById('interaction-overview-content');
+        if (!container) return;
+
+        const active = patientMedicinesCache.filter(m => m.isActive !== false);
+        if (active.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state" style="padding: 12px;">
+                    <div class="icon">🛡️</div>
+                    <p>No active medicines on this account yet.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const names = active.slice(0, 2).map(m => escapeHtml(m.medicineName)).join(' + ');
+        const message = active.length > 1
+            ? 'Use the scanner above before combining medicines, supplements, or alcohol.'
+            : 'Add another medicine or use the scanner above to check a possible combination.';
+
+        container.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                <div>
+                    <strong>${names}</strong>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin-top: 2px;">${message}</p>
+                </div>
+                <span class="clinical-badge badge-safe">${active.length} active</span>
+            </div>
+        `;
+    }
+
+    function populateRefillMedicationSelect(selectedMedicineId = null) {
+        const select = document.getElementById('refill-med-select');
+        const submitBtn = document.getElementById('submit-refill-btn');
+        if (!select) return;
+
+        const active = patientMedicinesCache.filter(m => m.isActive !== false);
+        if (active.length === 0) {
+            select.innerHTML = '<option value="">Add an active medicine before requesting a refill</option>';
+            select.disabled = true;
+            if (submitBtn) submitBtn.disabled = true;
+            updateRefillPrice();
+            return;
+        }
+
+        select.disabled = false;
+        if (submitBtn) submitBtn.disabled = false;
+        select.innerHTML = active.map(medicine => {
+            const selected = selectedMedicineId && Number(selectedMedicineId) === Number(medicine.medicineId) ? ' selected' : '';
+            const price = Number(medicine.price || 0);
+            return `<option value="${medicine.medicineId}" data-name="${escapeHtml(medicine.medicineName)}" data-price="${price}"${selected}>${escapeHtml(getMedicineLabel(medicine))} - ${formatCurrency(price)}/strip</option>`;
+        }).join('');
+        updateRefillPrice();
+    }
+
+    function populateMedicineCatalogSelect() {
+        const select = document.getElementById('modal-medicine-id');
+        if (!select) return;
+
+        if (medicineCatalogCache.length === 0) {
+            select.innerHTML = '<option value="">No pharmacy catalog items available</option>';
+            select.disabled = true;
+            return;
+        }
+
+        select.disabled = false;
+        select.innerHTML = medicineCatalogCache.map(medicine => {
+            const manufacturer = medicine.manufacturer ? ` (${medicine.manufacturer})` : '';
+            const price = Number(medicine.price || 0);
+            const stock = Number(medicine.stockQuantity || 0);
+            return `<option value="${medicine.medicineId}">${escapeHtml(medicine.name + manufacturer)} - ${formatCurrency(price)} · Stock ${stock}</option>`;
+        }).join('');
+    }
+
+    async function loadMedicineCatalog() {
+        const res = await fetchApi('/patient/medicines/catalog');
+        medicineCatalogCache = res && res.success ? (res.data || []) : [];
+        populateMedicineCatalogSelect();
+    }
+
+    function updateDashboardSummary() {
+        const active = patientMedicinesCache.filter(m => m.isActive !== false);
+        const pendingRefills = refillRequestCache.filter(r => r.status === 'PENDING').length;
+        const verifiedPrescriptions = prescriptionCache.filter(p => p.status === 'VERIFIED').length;
+        const adherenceText = document.getElementById('adherence-score')?.textContent || '0%';
+        const nextReminder = reminderCache[0];
+
+        setText('active-medicines-count', active.length);
+        setText('active-medicines-note', active.length === 1 ? '1 medicine in your profile' : `${active.length} medicines in your profile`);
+        setText('care-adherence-chip', `Adherence ${adherenceText}`);
+        setText('care-medicine-chip', `${active.length} active medicine${active.length === 1 ? '' : 's'}`);
+        setText('care-prescription-chip', `${verifiedPrescriptions} verified prescription${verifiedPrescriptions === 1 ? '' : 's'}`);
+
+        if (nextReminder) {
+            setText('next-priority-name', nextReminder.medicineName || 'Scheduled medicine');
+            setText('next-priority-instructions', `Due at ${nextReminder.dueTime || 'today'}`);
+            setText('insight-dose-pattern', 'Action pending today');
+        } else if (active.length > 0) {
+            setText('next-priority-name', active[0].medicineName);
+            setText('next-priority-instructions', active[0].instructions || 'No reminder scheduled yet');
+            setText('insight-dose-pattern', 'No open dose reminders');
+        } else {
+            setText('next-priority-name', 'No medicine scheduled');
+            setText('next-priority-instructions', 'Add a medicine to build this patient profile.');
+            setText('insight-dose-pattern', 'No logs yet');
+        }
+
+        setText('next-refill-value', pendingRefills > 0 ? pendingRefills : '--');
+        setText('next-refill-note', pendingRefills > 0 ? `${pendingRefills} pending refill request${pendingRefills === 1 ? '' : 's'}` : 'No pending refill requests');
+        setText('profile-next-refill-value', pendingRefills > 0 ? `${pendingRefills} pending` : 'No estimate');
+        setText('insight-prescription-status', prescriptionCache.length > 0 ? `${verifiedPrescriptions}/${prescriptionCache.length} verified` : 'None uploaded');
+        setText('insight-refill-status', pendingRefills > 0 ? `${pendingRefills} pending` : 'No pending requests');
+        renderInteractionOverview();
+    }
 
     async function loadRefillPharmacists() {
         const select = document.getElementById('refill-pharmacist-select');
@@ -114,15 +241,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             setText('user-greeting', `Hello, ${fullName}`);
             container.innerHTML = `
                 <div style="font-size: 1.1rem; margin-bottom: 6px;"><strong>${escapeHtml(fullName)}</strong></div>
-                <div style="color: var(--text-secondary); margin-bottom: 4px; font-size: 13px;">📅 DOB: ${escapeHtml(p.dateOfBirth || '1985-08-20')}</div>
-                <div style="color: var(--text-secondary); margin-bottom: 4px; font-size: 13px;">📞 Contact: ${escapeHtml(p.contactNumber || '+91 98450 12345')}</div>
+                <div style="color: var(--text-secondary); margin-bottom: 4px; font-size: 13px;">📅 DOB: ${escapeHtml(p.dateOfBirth || 'Not added')}</div>
+                <div style="color: var(--text-secondary); margin-bottom: 4px; font-size: 13px;">📞 Contact: ${escapeHtml(p.contactNumber || 'Not added')}</div>
             `;
             if (document.getElementById('set-name')) document.getElementById('set-name').value = fullName;
             if (document.getElementById('set-phone')) document.getElementById('set-phone').value = p.contactNumber || '';
 
             // Sync Emergency Health Card
             if (document.getElementById('med-id-name')) document.getElementById('med-id-name').textContent = fullName;
-            if (document.getElementById('med-id-dob')) document.getElementById('med-id-dob').textContent = p.dateOfBirth || '1985-08-20';
+            if (document.getElementById('med-id-dob')) document.getElementById('med-id-dob').textContent = p.dateOfBirth || 'Not added';
         } else {
             setText('user-greeting', 'Hello, Patient');
             container.innerHTML = `<div class="empty-state"><p style="color:var(--danger)">Failed to load profile.</p></div>`;
@@ -134,6 +261,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const res = await fetchApi('/patient/reminders');
         const container = document.getElementById('reminders-content');
         if (res && res.success) {
+            reminderCache = res.data || [];
+            updateDashboardSummary();
             if (res.data.length === 0) {
                 container.innerHTML = `<div class="empty-state" style="padding: 24px;"><div class="icon">✅</div><p>You are all caught up on all doses for today!</p></div>`;
                 return;
@@ -156,7 +285,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <span class="food-timing-tag">${foodGuideline}</span>
                             </div>
                             <p style="margin: 4px 0 0 0; color: var(--text-secondary); font-size: 13px;">
-                                Dosage: <strong>${r.dosage}</strong> • Scheduled Time: <strong>${r.timeOfDay}</strong>
+                                Due today at <strong>${r.dueTime || 'scheduled time'}</strong>
                             </p>
                         </div>
                         <div style="display: flex; gap: 8px;">
@@ -168,15 +297,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             container.innerHTML = html;
         } else {
+            reminderCache = [];
+            updateDashboardSummary();
             container.innerHTML = `<p style="color:var(--danger)">Failed to load reminders.</p>`;
         }
     }
 
     // Active Medications Loader
     async function loadMedications() {
-        const res = await fetchApi('/patient/medication-schedules');
+        const res = await fetchApi('/patient/medicines');
         const container = document.getElementById('medications-content');
         if (res && res.success) {
+            patientMedicinesCache = res.data || [];
+            populateRefillMedicationSelect();
+            updateDashboardSummary();
             if (res.data.length === 0) {
                 container.innerHTML = `<div class="empty-state"><div class="icon">💊</div><p>No active medications.</p></div>`;
                 return;
@@ -186,25 +320,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <tr>
                         <th>Medicine</th>
                         <th>Dosage</th>
-                        <th>Frequency & Timing</th>
+                        <th>Food & Timing</th>
                         <th>Clinical Status</th>
                         <th>Refill Action</th>
                     </tr>
                 </thead>
                 <tbody>`;
-            res.data.forEach(s => {
-                const statusBadge = s.isActive ? '<span class="badge success">ACTIVE</span>' : '<span class="badge warning">INACTIVE</span>';
+            res.data.forEach(m => {
+                const statusBadge = m.isActive ? '<span class="badge success">ACTIVE</span>' : '<span class="badge warning">INACTIVE</span>';
                 html += `
                     <tr>
                         <td>
-                            <strong>${s.medicineName}</strong>
-                            <div style="font-size: 11px; color: var(--text-secondary);">Verified Clinical Prescription</div>
+                            <strong>${escapeHtml(m.medicineName)}</strong>
+                            <div style="font-size: 11px; color: var(--text-secondary);">${escapeHtml(m.manufacturer || 'Pharmacy catalog')}</div>
                         </td>
-                        <td>${s.dosage}</td>
-                        <td>${s.frequency} at ${s.timeOfDay}</td>
+                        <td>${escapeHtml(m.dosage || 'Not set')}</td>
+                        <td>${escapeHtml(m.instructions || 'No instruction added')}</td>
                         <td>${statusBadge}</td>
                         <td>
-                            <button class="btn" style="padding: 4px 10px; font-size: 12px; background: var(--primary-soft); color: var(--primary-color); border: 1px solid var(--primary-color);" onclick="openRefillModal()">
+                            <button class="btn" style="padding: 4px 10px; font-size: 12px; background: var(--primary-soft); color: var(--primary-color); border: 1px solid var(--primary-color);" onclick="openRefillModal(${m.medicineId})">
                                 🛒 Refill (₹)
                             </button>
                         </td>
@@ -214,6 +348,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             html += `</tbody></table></div>`;
             container.innerHTML = html;
         } else {
+            patientMedicinesCache = [];
+            populateRefillMedicationSelect();
+            updateDashboardSummary();
             container.innerHTML = `<p style="color:var(--danger)">Failed to load medications.</p>`;
         }
     }
@@ -223,6 +360,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const res = await fetchApi('/patient/prescriptions');
         const container = document.getElementById('prescriptions-content');
         if (res && res.success) {
+            prescriptionCache = res.data || [];
+            updateDashboardSummary();
             if (res.data.length === 0) {
                 container.innerHTML = `<div class="empty-state"><div class="icon">📄</div><p>No prescriptions uploaded.</p></div>`;
                 return;
@@ -248,7 +387,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <td>${new Date(p.uploadDate).toLocaleDateString()}</td>
                         <td><a href="${window.BACKEND_DOMAIN}${p.filePath}" target="_blank" style="color: var(--primary-color); font-weight: 600;">View Medical PDF</a></td>
                         <td><span class="badge ${badgeClass}">${p.status}</span></td>
-                        <td style="color: var(--text-secondary); font-size: 13px;">${p.notes || 'Verified by Dr. Admin (PH-99999)'}</td>
+                        <td style="color: var(--text-secondary); font-size: 13px;">${escapeHtml(p.notes || 'Waiting for pharmacist notes')}</td>
                         <td>
                             <button class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;" onclick="openRefillModal()">
                                 🛒 Order Refill (₹)
@@ -260,6 +399,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             html += `</tbody></table></div>`;
             container.innerHTML = html;
         } else {
+            prescriptionCache = [];
+            updateDashboardSummary();
             container.innerHTML = `<p style="color:var(--danger)">Failed to load prescriptions.</p>`;
         }
     }
@@ -270,11 +411,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const res = await fetchApi('/patient/refills');
         if (!res || !res.success) {
+            refillRequestCache = [];
+            updateDashboardSummary();
             container.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Unable to load refill requests.</p></div>`;
             return;
         }
 
         const requests = res.data || [];
+        refillRequestCache = requests;
+        updateDashboardSummary();
         if (requests.length === 0) {
             container.innerHTML = `<div class="empty-state"><div class="icon">🧾</div><p>No refill requests yet.</p></div>`;
             return;
@@ -321,7 +466,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function loadScheduleAndAdherence() {
         const adRes = await fetchApi('/patient/adherence');
         if (adRes && adRes.success) {
-            document.getElementById('adherence-score').textContent = `${adRes.data.adherencePercentage}%`;
+            document.getElementById('adherence-score').textContent = formatPercent(adRes.data.adherencePercentage);
+            updateDashboardSummary();
         }
 
         const histRes = await fetchApi('/patient/history');
@@ -421,6 +567,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Add Medicine Modal Logic
     window.openAddMedicineModal = function() {
         document.getElementById('addMedicineModal').classList.add('active');
+        if (medicineCatalogCache.length === 0) {
+            loadMedicineCatalog();
+        }
     };
     window.closeAddMedicineModal = function() {
         document.getElementById('addMedicineModal').classList.remove('active');
@@ -433,6 +582,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const medId = document.getElementById('modal-medicine-id').value;
             const dosage = document.getElementById('modal-dosage').value;
             const instructions = document.getElementById('modal-instructions').value;
+
+            if (!medId) {
+                window.showToast('Please choose a medicine from the catalog.', 'warning');
+                return;
+            }
 
             try {
                 const res = await fetchApi('/patient/medicines', {
@@ -458,10 +612,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Refill Modal Logic (in INR ₹)
-    window.openRefillModal = function() {
+    window.openRefillModal = function(selectedMedicineId = null) {
         document.getElementById('refillModal').classList.add('active');
+        populateRefillMedicationSelect(selectedMedicineId);
         loadRefillPharmacists();
-        updateRefillPrice();
     };
     window.closeRefillModal = function() {
         document.getElementById('refillModal').classList.remove('active');
@@ -470,7 +624,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.updateRefillPrice = function() {
         const select = document.getElementById('refill-med-select');
         const methodSelect = document.getElementById('refill-method');
-        const unitPrice = parseFloat(select.value);
+        const selectedOption = select && select.options[select.selectedIndex];
+        const unitPrice = selectedOption ? parseFloat(selectedOption.getAttribute('data-price') || '0') : 0;
         const qty = parseInt(document.getElementById('refill-qty').value) || 1;
         const medicinesTotal = unitPrice * qty;
         const deliveryFee = methodSelect && methodSelect.value === 'Delivery' ? 40 : 0;
@@ -488,7 +643,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         const select = document.getElementById('refill-med-select');
         const selectedOption = select.options[select.selectedIndex];
-        const medName = selectedOption.getAttribute('data-name');
+        const medName = selectedOption ? selectedOption.getAttribute('data-name') : '';
         const qty = Number(document.getElementById('refill-qty').value);
         const method = document.getElementById('refill-method').value;
         const pharmacistSelect = document.getElementById('refill-pharmacist-select');
@@ -498,6 +653,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const total = document.getElementById('refill-total-price').textContent;
         const totalAmount = Number(total.replace(/[^0-9.]/g, ''));
         const submitBtn = document.getElementById('submit-refill-btn');
+
+        if (!medName) {
+            window.showToast('Add an active medicine before requesting a refill.', 'error');
+            return;
+        }
 
         if (!pharmacistId) {
             window.showToast('Please choose the pharmacist or pharmacy to receive this refill request.', 'error');
@@ -613,5 +773,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadPrescriptions();
     loadRefillRequests();
     loadRefillPharmacists();
+    loadMedicineCatalog();
     loadScheduleAndAdherence();
 });

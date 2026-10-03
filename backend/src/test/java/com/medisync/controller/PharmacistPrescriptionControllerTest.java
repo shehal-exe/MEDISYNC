@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -46,7 +47,7 @@ public class PharmacistPrescriptionControllerTest {
         res.setPrescriptionId(1L);
         res.setStatus("PENDING");
 
-        when(pharmacistPrescriptionService.getAllPrescriptions(null)).thenReturn(List.of(res));
+        when(pharmacistPrescriptionService.getAllPrescriptions(eq("pharmacist@medisync.com"), isNull())).thenReturn(List.of(res));
 
         mockMvc.perform(get("/api/v1/pharmacist/prescriptions"))
                 .andExpect(status().isOk())
