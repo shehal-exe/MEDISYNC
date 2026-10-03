@@ -7,7 +7,7 @@ const LOCAL_BACKEND_URL = window.location.hostname === '127.0.0.1'
 
 // NOTE FOR DEPLOYMENT: Replace PROD_BACKEND_URL with your actual deployed Railway/Render backend URL.
 // Production browser requests go through the same-origin Vercel proxy so session cookies are not blocked.
-const PROD_BACKEND_URL = 'https://medisync-backend-production.up.railway.app';
+const PROD_BACKEND_URL = 'https://backend-api-production-a774.up.railway.app';
 window.DIRECT_BACKEND_DOMAIN = isLocal ? LOCAL_BACKEND_URL : PROD_BACKEND_URL;
 window.BACKEND_DOMAIN = isLocal ? LOCAL_BACKEND_URL : window.location.origin;
 
