@@ -101,7 +101,7 @@ public class AuthService {
         userDao.updatePassword(user.getUserId(), passwordEncoder.encode(request.getNewPassword()));
     }
 
-    public void forgotPassword(ForgotPasswordRequest request) {
+    public String forgotPassword(ForgotPasswordRequest request) {
         User user = userDao.findByEmail(request.getEmail());
         if (user != null) {
             String rawToken = UUID.randomUUID().toString();
@@ -109,7 +109,9 @@ public class AuthService {
             passwordResetTokenDao.createToken(user.getUserId(), tokenHash, LocalDateTime.now().plusHours(1));
             // In a real application, send an email with the rawToken here.
             // For this academic project, we simulate success without emailing.
+            return rawToken;
         }
+        return null;
     }
 
     public void resetPassword(ResetPasswordRequest request) {

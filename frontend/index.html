@@ -655,6 +655,22 @@
             text-decoration: underline;
         }
 
+        .portal-auth-links {
+            margin-top: 0.9rem;
+            text-align: right;
+            font-size: 0.85rem;
+        }
+
+        .portal-auth-links a {
+            color: var(--brand-primary);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .portal-auth-links a:hover {
+            text-decoration: underline;
+        }
+
         /* Demo Helper Pill */
         .demo-credentials-pill {
             background: linear-gradient(180deg, #F8FAFC, #EFF7F6);
@@ -971,6 +987,10 @@
 
                         <button type="submit" class="btn-portal-submit" id="loginBtnText">Sign In to Portal</button>
                     </form>
+
+                    <div class="portal-auth-links">
+                        <a href="forgot-password.html">Forgot password?</a>
+                    </div>
 
                     <div class="portal-register-prompt" id="registerPrompt">
                         New patient? <a href="register.html">Create a free account →</a>

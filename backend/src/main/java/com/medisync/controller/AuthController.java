@@ -133,10 +133,18 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<ApiResponse<Void>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        authService.forgotPassword(request);
+    public ResponseEntity<ApiResponse<ForgotPasswordResponse>> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request,
+            HttpServletRequest httpRequest) {
+        String resetToken = authService.forgotPassword(request);
+        boolean localDemo = isLocalRequest(httpRequest);
+        ForgotPasswordResponse data = new ForgotPasswordResponse(localDemo, localDemo ? resetToken : null);
         // Always return success to avoid leaking email existence
-        return ResponseEntity.ok(new ApiResponse<>(true, "If the email is registered, a password reset link has been sent."));
+        return ResponseEntity.ok(new ApiResponse<>(
+                true,
+                "If the email is registered, a password reset link has been sent.",
+                data
+        ));
     }
 
     @PostMapping("/reset-password")
@@ -147,5 +155,13 @@ public class AuthController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, e.getMessage(), "RESET_FAILED"));
         }
+    }
+
+    private boolean isLocalRequest(HttpServletRequest request) {
+        String serverName = request.getServerName();
+        return "localhost".equalsIgnoreCase(serverName)
+                || "127.0.0.1".equals(serverName)
+                || "0:0:0:0:0:0:0:1".equals(serverName)
+                || "::1".equals(serverName);
     }
 }

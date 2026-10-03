@@ -111,8 +111,10 @@ public class AuthServiceTest {
         req2.setEmail("notexists@example.com");
         when(userDao.findByEmail("notexists@example.com")).thenReturn(null);
 
-        assertDoesNotThrow(() -> authService.forgotPassword(req1));
-        assertDoesNotThrow(() -> authService.forgotPassword(req2));
+        String token = assertDoesNotThrow(() -> authService.forgotPassword(req1));
+        String missingToken = assertDoesNotThrow(() -> authService.forgotPassword(req2));
+        assertNotNull(token);
+        assertNull(missingToken);
         
         verify(passwordResetTokenDao, times(1)).createToken(any(), any(), any());
     }
