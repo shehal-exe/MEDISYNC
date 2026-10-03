@@ -103,12 +103,26 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const alertBox = document.getElementById('register-alert');
             alertBox.style.display = 'none';
+            const password = document.getElementById('password').value;
+            const confirmPasswordInput = document.getElementById('confirmRegisterPassword');
+            const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value : password;
+
+            if (password !== confirmPassword) {
+                alertBox.textContent = "Passwords don't match. Please re-enter your password.";
+                alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
+                if (confirmPasswordInput) {
+                    confirmPasswordInput.value = '';
+                    confirmPasswordInput.focus();
+                }
+                return;
+            }
 
             const formData = {
                 firstName: document.getElementById('firstName').value,
                 lastName: document.getElementById('lastName').value,
                 email: document.getElementById('email').value,
-                password: document.getElementById('password').value,
+                password,
                 contactNumber: document.getElementById('contactNumber').value,
                 dateOfBirth: document.getElementById('dateOfBirth').value,
                 licenseNumber: document.getElementById('licenseNumber') ? document.getElementById('licenseNumber').value : ''
