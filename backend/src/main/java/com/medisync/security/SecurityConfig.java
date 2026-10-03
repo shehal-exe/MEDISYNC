@@ -156,7 +156,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         // Allow the frontend local server across common development ports (3000, 5500, 8000, 8080) and file protocol
         configuration.setAllowedOriginPatterns(Arrays.asList(
-                "http://localhost:*",
+                "http://localhost:*", "https://medisync-frontend-woad.vercel.app", "https://*.vercel.app",
                 "http://127.0.0.1:*",
                 "http://[::1]:*",
                 "null"
