@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDISYNC - Registration | Healthcare & Pharmacy Access</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/global.css?v=modal-scroll-20260927">
+    <link rel="stylesheet" href="css/auth.css?v=pharmacist-signup-20260927">
+</head>
+<body class="auth-page">
+
+    <!-- Top Navigation Bar -->
+    <nav class="auth-nav">
+        <a href="index.html" class="brand">
+            <span>MEDISYNC</span>
+            <span class="brand-badge">Healthcare Suite</span>
+        </a>
+        <a href="index.html" class="back-link">
+            <span>← Return to Portal</span>
+        </a>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="auth-wrapper">
+
+        <!-- Left Brand & Value Proposition Column -->
+        <div class="auth-hero-col">
+            <div class="hero-pill">
+                <span class="dot"></span>
+                <span id="registerHeroPillText">Patient Portal Registration</span>
+            </div>
+
+            <h1 id="registerHeroTitle">
+                Take Control of Your Health. <br>
+                <span class="gradient-text">Zero Missed Doses.</span>
+            </h1>
+
+            <p class="hero-desc" id="registerHeroDesc">
+                Join MEDISYNC to bridge your daily care with your pharmacy. Experience personalized dosage scheduling, fast digital prescription verification, and continuous adherence monitoring.
+            </p>
+
+            <ul class="auth-perks">
+                <li>
+                    <span class="perk-icon">⏰</span>
+                    <div>
+                        <strong>Intelligent Dose Reminders</strong>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Daily and weekly scheduling alerts personalized to your prescription routine.</div>
+                    </div>
+                </li>
+                <li>
+                    <span class="perk-icon">📄</span>
+                    <div>
+                        <strong>Direct Pharmacy Sync</strong>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Upload prescriptions digitally and receive live verification status from licensed pharmacists.</div>
+                    </div>
+                </li>
+                <li>
+                    <span class="perk-icon">📈</span>
+                    <div>
+                        <strong>Adherence Analytics</strong>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Track daily streaks and health trends to stay consistently on top of your treatment.</div>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="trust-card">
+                <div class="trust-avatar">🔒</div>
+                <div class="trust-quote">
+                    <strong>Private & Secure</strong> — Your medical history and prescriptions are encrypted and segregated strictly between you and your healthcare provider.
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Registration Form Card -->
+        <div class="auth-form-card">
+            <div class="form-header">
+                <h2 id="registerFormTitle">Create Your Account</h2>
+                <p id="registerFormSubtitle">Enter your details below to register for the Patient Portal.</p>
+            </div>
+
+            <!-- Feedback Alert Box -->
+            <div id="register-alert" class="alert"></div>
+            
+            <form id="register-form">
+                <input type="hidden" id="accountRole" value="PATIENT">
+
+                <div class="auth-role-switcher" aria-label="Choose account type">
+                    <button type="button" class="auth-role-option active" id="registerPatientOption" onclick="setRegisterRole('PATIENT')">
+                        Patient
+                    </button>
+                    <button type="button" class="auth-role-option" id="registerPharmacistOption" onclick="setRegisterRole('PHARMACIST')">
+                        Pharmacist
+                    </button>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" required placeholder="e.g. Jane">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" required placeholder="e.g. Doe">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="name@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password (min 6 characters)</label>
+                    <input type="password" id="password" name="password" required minlength="6" placeholder="Choose a secure password">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmRegisterPassword">Confirm Password</label>
+                    <input type="password" id="confirmRegisterPassword" name="confirmPassword" required minlength="6" placeholder="Re-enter your password">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactNumber">Contact Phone Number</label>
+                    <input type="tel" id="contactNumber" name="contactNumber" placeholder="+1 (555) 000-0000">
+                </div>
+                
+                <div class="form-group patient-only-field" id="dateOfBirthGroup">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                </div>
+
+                <div class="form-group pharmacist-only-field" id="licenseNumberGroup" style="display:none;">
+                    <label for="licenseNumber">Pharmacist License Number</label>
+                    <input type="text" id="licenseNumber" name="licenseNumber" placeholder="e.g. PH-KL-2026-0142">
+                    <div class="field-help">Required for pharmacist accounts. This must be unique and will be verified before account creation.</div>
+                </div>
+                
+                <button type="submit" class="btn-submit" id="registerSubmitBtn">Complete Registration</button>
+            </form>
+            
+            <div class="auth-card-footer">
+                <p>Already have an account? <a href="index.html#portal">Sign in to your portal</a></p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/api.js?v=4"></script>
+    <script src="js/auth.js?v=password-confirm-20261003"></script>
+</body>
+</html>
