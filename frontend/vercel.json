@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "name": "medisync-frontend",
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://backend-api-production-a774.up.railway.app/api/$1"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "https://backend-api-production-a774.up.railway.app/uploads/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
